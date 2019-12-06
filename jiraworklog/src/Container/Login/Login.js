@@ -36,10 +36,7 @@ class Login extends Component {
     //console.log(nconf.get(all))
 
   }
-
-
-
-
+  
   render() {
     let { email, apitoken, apiurl } = this.state;
     let LoginForm =
@@ -47,7 +44,7 @@ class Login extends Component {
         <Grid.Column style={{ maxWidth: 450 }}>
           <Header as='h2' color='blue' textAlign='center'>
             Log-in to your account
-      </Header>
+          </Header>
           <Form size='large' onSubmit={this.gotoTimesheet}>
             <Segment stacked>
               <Input fluid icon='user'
@@ -71,7 +68,6 @@ class Login extends Component {
                 style={{ width: 400 }}
 
               />
-
               <Input
                 fluid
                 icon='lock'
@@ -85,20 +81,15 @@ class Login extends Component {
                 style={{ width: 400 }}
 
               />
-
               <Button color='blue' fluid size='large'>
                 Login
-          </Button>
+              </Button>
             </Segment>
           </Form>
-
         </Grid.Column>
       </Grid>
-
-
-
-
-    return (
+      
+      return (
       <>
         {LoginForm}
       </>
