@@ -4,9 +4,9 @@ import { Button, Grid, Header, Segment } from 'semantic-ui-react'
 import { Form, Input } from 'semantic-ui-react-form-validator';
 import 'semantic-ui-css/semantic.min.css';
 
-// import config from '../../config.json';
 
-// var fs=require('fs');
+const base64 = require('base-64');
+
 class Login extends Component {
 
   state = {
@@ -15,27 +15,55 @@ class Login extends Component {
     apiurl: ""
   }
 
-  credientialobject = {
-    "apiurl": "https://vaishnavijawanjal.atlassian.net",
-    "email": "vaishnavi.jawanjal@cuelogic.com",
-    "apiToken": "76cUIpriuCh9iNmcdrWe07D4"
-  }
+  
 
-  // nconf.file('../../config.json');
+  fetchData = async () => {
+  let headers = new Headers();
+    headers.append("Content-Type", "application/json");
+    headers.append("Accept", "application/json");
+    headers.append('Authorization', 'Basic ' + base64.encode(`${this.state.email}:${this.state.apitoken}`));
+    let arr=[];
+    try{
+    let res = await fetch(`${this.state.apiurl}/rest/api/2/user/assignable/search?project=REAC`, { method: 'GET', headers: headers });
+    res = res.json();
+      
+        // .then(res => res.json())
+        // .then(res => {
+        //   if(res.length<=0){
+        //     console.log('credientials are not correct!');
+        //   }
+        //   else{
+        //     for(let key in res){
+        //         arr.push({
+        //             id:res[key].accountId,
+        //             avatarUrls:Object.values(res[key].avatarUrls)[3],
+        //             name:res[key].displayName
 
-  gotoTimesheet = () => {
+        //         });
+        //       }
+        //     }
+        //     console.log("response", res);
+        //     console.log("user array",arr)
+        //     this.setState({user:arr})
+        //     console.log("state",this.state.user);
+        //     this.props.history.push('/timesheet');
 
-    if (this.state.email === this.credientialobject.email && this.state.apitoken === this.credientialobject.apiToken && this.state.apiurl === this.credientialobject.apiurl) {
-      this.props.history.push('/timesheet');
 
-    }
-    else {
-      alert('email or password or apiurl not correct')
-    }
-    // nconf.file('../../config.json');
-    //console.log(nconf.get(all))
+        // }
 
-  }
+        // );
+      
+      }
+        catch(error){
+          console.log("worng crediential",error)
+        }
+}
+
+
+
+ 
+
+ 
   
   render() {
     let { email, apitoken, apiurl } = this.state;
@@ -45,7 +73,9 @@ class Login extends Component {
           <Header as='h2' color='blue' textAlign='center'>
             Log-in to your account
           </Header>
-          <Form size='large' onSubmit={this.gotoTimesheet}>
+          <Form size='large'
+             onSubmit={this.fetchData}
+           >
             <Segment stacked>
               <Input fluid icon='user'
                 iconPosition='left'

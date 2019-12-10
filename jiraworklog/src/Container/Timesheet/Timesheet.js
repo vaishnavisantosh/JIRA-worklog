@@ -20,7 +20,7 @@ class Timesheet extends Component {
         headers.append("Content-Type", "application/json");
         headers.append("Accept", "application/json");
         headers.append('Authorization', 'Basic ' + base64.encode('vaishnavi.jawanjal@cuelogic.com:76cUIpriuCh9iNmcdrWe07D4'));
-        let arr=[];
+        let arr=[],totalIssues,issueKeys=[];
         fetch('https://vaishnavijawanjal.atlassian.net/rest/api/2/user/assignable/search?project=REAC', { method: 'GET', headers: headers })
             .then(res => res.json())
             .then(res => {
@@ -29,7 +29,6 @@ class Timesheet extends Component {
                         id:res[key].accountId,
                         avatarUrls:Object.values(res[key].avatarUrls)[3],
                         name:res[key].displayName
-
                     });
 
                 }
@@ -40,8 +39,28 @@ class Timesheet extends Component {
 
             }
 
-            );
-            
+            ).then(() => {
+
+                fetch('https://vaishnavijawanjal.atlassian.net/rest/api/2/search?jql=project=REAC&fields=issue,name&startAt=0&maxResults=8000 ', { method: 'GET', headers: headers })
+                .then(res=>res.json())
+                .then(res=>{
+                    totalIssues=res;
+                    for(let issuekey in res.issues){
+                        issueKeys.push(res.issues[issuekey].key);
+                    }
+                    // console.log('isuessssssss',totalIssues);
+                    // console.log('res.issue',res.issues)
+                    console.log("key arrrayy",issueKeys)
+                }).then(() => {
+                issueKeys.map(i=>{
+                    fetch(`https://vaishnavijawanjal.atlassian.net/rest/api/3/issue/${i}/worklog`,{ method: 'GET', headers: headers})
+                    .then(res=>res.json())
+                    .then(res=>{
+                        console.log('its api call for iterating all issues',res)
+                    })
+                });
+            });
+            });
 
     }
 
@@ -79,14 +98,10 @@ let user;
                     <tbody>
                         {
                             user=this.state.user.map(param=>
-                              
-                        <User
+                            <User
                             key={param.id}
                             name={param.name}
                             avatarUrls={param.avatarUrls}/>
-                            
-
-                       
                             )}
                             
 
