@@ -1,20 +1,25 @@
 import React, { Component } from 'react';
 // import {} from 'semantic-ui-react';
-import { Button, Table } from 'react-bootstrap';
-// import 'bootstrap-daterangepicker/daterangepicker.css';
-//  import {DatetimeRangePicker} from 'react-bootstrap-datetimerangepicker';
-import User from '../../Component/User/User';
-import * as moment from "moment";
-const base64 = require('base-64');
+ import DateRangePicker from '../../Component/DateRangePicker/DateRangePicker';
+// import { DateRangePicker } from 'react-date-range';
 
+import { Button, Table } from 'react-bootstrap';
+import User from '../../Component/User/User';
+
+import 'bootstrap/dist/css/bootstrap.css';
+// import moment from "moment";
+const base64 = require('base-64');
+const moment=require('moment');
 
 class Timesheet extends Component {
 
     state = {
-        user: []
+        user: [],
+        
     }
+    
 
-
+   
     componentDidMount() {
         let headers = new Headers();
         headers.append("Content-Type", "application/json");
@@ -37,14 +42,12 @@ class Timesheet extends Component {
                 this.setState({ user: arr })
                 console.log("state", this.state.user);
 
-            }
-
-            ).then(() => {
+            }).then(() => {
 
                 fetch('https://vaishnavijawanjal.atlassian.net/rest/api/2/search?jql=project=REAC&fields=issue,name&startAt=0&maxResults=8000 ', { method: 'GET', headers: headers })
                     .then(res => res.json())
                     .then(res => {
-                        totalIssues = res;
+                        // totalIssues = res;
                         for (let issuekey in res.issues) {
                             issueKeys.push(res.issues[issuekey].key);
                         }
@@ -64,16 +67,35 @@ class Timesheet extends Component {
 
     }
 
+    handleSelect(ranges){
+		console.log(ranges);
+		// {
+		// 	selection: {
+		// 		startDate: [native Date Object],
+		// 		endDate: [native Date Object],
+		// 	}
+		// }
+	}
     render() {
         console.log("inside renderrrrrrr", this.state.user);
         let user;
+        const selectionRange = {
+			startDate: new Date(),
+			endDate: new Date(),
+			key: 'selection',
+		}
+        
+
         return (
             <>
+            
+            
+                <DateRangePicker/>
+
                 <Table responsive>
                     <thead>
                         <tr>
-
-                            <th >Users</th>
+                            <th>Users</th>
                             <th></th>
                             <th>Table heading</th>
                             <th>Table heading</th>
@@ -91,8 +113,6 @@ class Timesheet extends Component {
                             <th>Table heading</th>
                             <th>Table heading</th>
                             <th>Table heading</th>
-
-
                         </tr>
                     </thead>
                     <tbody>
