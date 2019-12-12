@@ -26,7 +26,8 @@ class Login extends Component {
     try{
     let res = await fetch(`${this.state.apiurl}/rest/api/2/user/assignable/search?project=REAC`, { method: 'GET', headers: headers });
     res = res.json();
-      
+    // console.log('inside try');
+    this.props.history.push('/timesheet');
         // .then(res => res.json())
         // .then(res => {
         //   if(res.length<=0){
@@ -74,8 +75,7 @@ class Login extends Component {
             Log-in to your account
           </Header>
           <Form size='large'
-             onSubmit={this.fetchData}
-           >
+             onSubmit={this.fetchData}>
             <Segment stacked>
               <Input fluid icon='user'
                 iconPosition='left'

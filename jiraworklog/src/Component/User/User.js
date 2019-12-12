@@ -9,6 +9,9 @@ const User = (props) => {
         <tr>
             <td><img style={{width:'35px'}} src= {props.avatarUrls}/> </td>
             <td style={{fontSize:'15px',fontWeight:'bold'}}>{props.name}</td>
+            {
+props.dateArr.map(i=><td key={i}>{i}</td>)
+            }
         </tr>
     );
 
@@ -16,3 +19,6 @@ const User = (props) => {
 }
 
 export default User;
+
+// "5ddcbd17752c1b0d114e8cde"
+// "5ddcbd17752c1b0d114e8cde"

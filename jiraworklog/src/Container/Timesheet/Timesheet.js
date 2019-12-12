@@ -3,8 +3,12 @@ import React, { Component } from 'react';
  import DateRangePicker from '../../Component/DateRangePicker/DateRangePicker';
 // import { DateRangePicker } from 'react-date-range';
 
-import { Button, Table } from 'react-bootstrap';
+import {  Table } from 'react-bootstrap';
 import User from '../../Component/User/User';
+// import {DateRangePicker} from 'rsuite';
+// import 'rsuite/lib/styles/index.less'; 
+// or 
+import 'rsuite/dist/styles/rsuite-default.css';
 
 import 'bootstrap/dist/css/bootstrap.css';
 // import moment from "moment";
@@ -15,11 +19,13 @@ class Timesheet extends Component {
 
     state = {
         user: [],
+        dateArray:[10,11,12,13,14,15],
+         mydate : "2017-08-30T00:00:00"
+
         
     }
     
-
-   
+    
     componentDidMount() {
         let headers = new Headers();
         headers.append("Content-Type", "application/json");
@@ -33,7 +39,8 @@ class Timesheet extends Component {
                     arr.push({
                         id: res[key].accountId,
                         avatarUrls: Object.values(res[key].avatarUrls)[3],
-                        name: res[key].displayName
+                        name: res[key].displayName,
+                        datea:this.state.dateArray
                     });
 
                 }
@@ -67,52 +74,28 @@ class Timesheet extends Component {
 
     }
 
-    handleSelect(ranges){
-		console.log(ranges);
-		// {
-		// 	selection: {
-		// 		startDate: [native Date Object],
-		// 		endDate: [native Date Object],
-		// 	}
-		// }
-	}
+    
     render() {
         console.log("inside renderrrrrrr", this.state.user);
         let user;
-        const selectionRange = {
-			startDate: new Date(),
-			endDate: new Date(),
-			key: 'selection',
-		}
+        
         
 
         return (
             <>
             
             
-                <DateRangePicker/>
+                <DateRangePicker />
 
                 <Table responsive>
                     <thead>
                         <tr>
-                            <th>Users</th>
-                            <th></th>
-                            <th>Table heading</th>
-                            <th>Table heading</th>
-                            <th>Table heading</th>
-                            <th>Table heading</th>
-                            <th>Table heading</th>
-                            <th>Table heading</th>
-                            <th>Table heading</th>
-                            <th>Table heading</th>
-                            <th>Table heading</th>
-                            <th>Table heading</th>
-                            <th>Table heading</th>
-                            <th>Table heading</th>
-                            <th>Table heading</th>
-                            <th>Table heading</th>
-                            <th>Table heading</th>
-                            <th>Table heading</th>
+                            <th style={{width:'75px'}}>Users</th>
+                            <th style={{width:'100px'}}></th>
+                            {
+                                this.state.dateArray.map(i=><th key={i}>{moment(this.state.mydate).format(' D ddd')}</th>)
+                            }
+                            
                         </tr>
                     </thead>
                     <tbody>
@@ -121,45 +104,13 @@ class Timesheet extends Component {
                                 <User
                                     key={param.id}
                                     name={param.name}
-                                    avatarUrls={param.avatarUrls} />
+                                    avatarUrls={param.avatarUrls}
+                                    dateArr={param.datea}
+                                     />
                             )}
 
 
-                        {/* <tr>
-                            <td>1</td>
-                            <td>Table cell</td>
-                            <td>Table cell</td>
-                            <td>Table cell</td>
-                            <td>Table cell</td>
-                            <td>Table cell</td>
-                            <td>Table cell</td>
-                            <td>Table cell</td>
-                            <td>Table cell</td>
-
-                        </tr>
-                        <tr>
-                            <td>2</td>
-                            <td>Table cell</td>
-                            <td>Table cell</td>
-                            <td>Table cell</td>
-                            <td>Table cell</td>
-                            <td>Table cell</td>
-                            <td>Table cell</td>
-                            <td>Table cell</td>
-                            <td>Table cell</td>
-
-                        </tr>
-                        <tr>
-                            <td>3</td>
-                            <td>Table cell</td>
-                            <td>Table cell</td>
-                            <td>Table cell</td>
-                            <td>Table cell</td>
-                            <td>Table cell</td>
-                            <td>Table cell</td>
-                            <td>Table cell</td>
-                            <td>Table cell</td>
-                        </tr> */}
+                        
                     </tbody>
                 </Table>
 
