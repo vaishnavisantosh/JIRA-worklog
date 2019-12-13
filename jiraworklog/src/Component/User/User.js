@@ -10,8 +10,6 @@ const User = (props) => {
             <td><img style={{width:'35px'}} src= {props.avatarUrls}/> </td>
             <td style={{fontSize:'15px',fontWeight:'bold'}}>{props.name}</td>
             {
-                
-
                 props.time.map(i=><td key={i}>{i}</td>)
             }
         </tr>
