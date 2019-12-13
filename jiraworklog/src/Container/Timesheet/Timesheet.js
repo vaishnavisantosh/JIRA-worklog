@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 // import {} from 'semantic-ui-react';
- import DateRangePicker from '../../Component/DateRangePicker/DateRangePicker';
+//  import DateRangePicker from '../../Component/DateRangePicker/DateRangePicker';
 // import { DateRangePicker } from 'react-date-range';
 
 import {  Table } from 'react-bootstrap';
@@ -8,8 +8,8 @@ import User from '../../Component/User/User';
 // import {DateRangePicker} from 'rsuite';
 // import 'rsuite/lib/styles/index.less'; 
 // or 
-import 'rsuite/dist/styles/rsuite-default.css';
-
+// import 'rsuite/dist/styles/rsuite-default.css';
+import DateRangePicker from '@wojtekmaj/react-daterange-picker'
 import 'bootstrap/dist/css/bootstrap.css';
 // import moment from "moment";
 const base64 = require('base-64');
@@ -19,20 +19,20 @@ class Timesheet extends Component {
 
     state = {
         user: [],
-        dateArray:[10,11,12,13,14,15],
-         mydate : "2017-08-30T00:00:00"
-
-        
+         date: [new Date(),new Date()]
     }
     
     
     componentDidMount() {
+        let api=localStorage.getItem('api');
+        let url=localStorage.getItem('url');
+        let email=localStorage.getItem('email');
         let headers = new Headers();
         headers.append("Content-Type", "application/json");
         headers.append("Accept", "application/json");
-        headers.append('Authorization', 'Basic ' + base64.encode('vaishnavi.jawanjal@cuelogic.com:76cUIpriuCh9iNmcdrWe07D4'));
+        headers.append('Authorization', 'Basic ' + base64.encode(`${email}:${api}`));
         let arr = [], totalIssues, issueKeys = [];
-        fetch('https://vaishnavijawanjal.atlassian.net/rest/api/2/user/assignable/search?project=REAC', { method: 'GET', headers: headers })
+        fetch(`${url}/rest/api/2/user/assignable/search?project=REAC`, { method: 'GET', headers: headers })
             .then(res => res.json())
             .then(res => {
                 for (let key in res) {
@@ -40,7 +40,8 @@ class Timesheet extends Component {
                         id: res[key].accountId,
                         avatarUrls: Object.values(res[key].avatarUrls)[3],
                         name: res[key].displayName,
-                        datea:this.state.dateArray
+                        worklog:[]
+                        // datea:this.state.dateArray
                     });
 
                 }
@@ -51,7 +52,7 @@ class Timesheet extends Component {
 
             }).then(() => {
 
-                fetch('https://vaishnavijawanjal.atlassian.net/rest/api/2/search?jql=project=REAC&fields=issue,name&startAt=0&maxResults=8000 ', { method: 'GET', headers: headers })
+                fetch(`${url}/rest/api/2/search?jql=project=REAC&fields=issue,name&startAt=0&maxResults=8000 `, { method: 'GET', headers: headers })
                     .then(res => res.json())
                     .then(res => {
                         // totalIssues = res;
@@ -63,9 +64,18 @@ class Timesheet extends Component {
                         console.log("key arrrayy", issueKeys)
                     }).then(() => {
                         issueKeys.map(i => {
-                            fetch(`https://vaishnavijawanjal.atlassian.net/rest/api/3/issue/${i}/worklog`, { method: 'GET', headers: headers })
+                            fetch(`${url}/rest/api/3/issue/${i}/worklog`, { method: 'GET', headers: headers })
                                 .then(res => res.json())
                                 .then(res => {
+                                    for(let log in res){
+                                        res.worklogs.map(i=>{
+                                            if(i.author.key===arr[1].id){
+                                                
+                                                arr[0].worklog.push((i.timeSpentSeconds)/3600)
+                                            }
+                                        })
+                                    }
+                                    console.log('updated arrayyyyyyyyyyyyy',arr);
                                     console.log('its api call for iterating all issues', res)
                                 })
                         });
@@ -74,18 +84,44 @@ class Timesheet extends Component {
 
     }
 
+    getDateArray=(start,end)=>{
+        var dateArray = new Array();
+    var currentDate = start;
+    while (currentDate <= end) {
+        dateArray.push(new Date (currentDate));
+         currentDate.setDate(currentDate.getDate()+1);
+    }
+    // this.setState({dateArr:dateArray});
+        return dateArray;
+    }
+
+    handleDate=(date)=>{
+        this.setState({ date:date})
+        // console.log(this.state.date[1]);
+
+        // this.getDateArray(this.state.date[0],this.state.date[1])
+
+        
+    }
+
+
     
     render() {
         console.log("inside renderrrrrrr", this.state.user);
         let user;
-        
-        
+        console.log('date stateeeeeeeeeeeeee',this.state.date);
+        let dateArr=this.getDateArray(this.state.date[0],this.state.date[1]);
+
+        console.log('dateArrrrrrrrrrrrrrrrrrrrrrrrrrrr',dateArr)
 
         return (
             <>
             
             
-                <DateRangePicker />
+                <DateRangePicker 
+                onChange={this.handleDate}
+                 value={this.state.date}
+                />
 
                 <Table responsive>
                     <thead>
@@ -93,7 +129,8 @@ class Timesheet extends Component {
                             <th style={{width:'75px'}}>Users</th>
                             <th style={{width:'100px'}}></th>
                             {
-                                this.state.dateArray.map(i=><th key={i}>{moment(this.state.mydate).format(' D ddd')}</th>)
+                               
+                                dateArr.map(i=><th key={i}>{moment(i).format(' D ddd')}</th>)
                             }
                             
                         </tr>
@@ -105,7 +142,7 @@ class Timesheet extends Component {
                                     key={param.id}
                                     name={param.name}
                                     avatarUrls={param.avatarUrls}
-                                    dateArr={param.datea}
+                                    time={param.worklog}
                                      />
                             )}
 

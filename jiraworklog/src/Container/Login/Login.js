@@ -26,6 +26,10 @@ class Login extends Component {
     try{
     let res = await fetch(`${this.state.apiurl}/rest/api/2/user/assignable/search?project=REAC`, { method: 'GET', headers: headers });
     res = res.json();
+    localStorage.setItem('api',this.state.apitoken);
+    localStorage.setItem('url',this.state.apiurl);
+    localStorage.setItem('email',this.state.email);
+
     // console.log('inside try');
     this.props.history.push('/timesheet');
         // .then(res => res.json())
