@@ -20,21 +20,59 @@ const base64 = require('base-64');
 const moment = require('moment');
 
  const initialState = { isLoading: false, results: [], value: '' }
- var date = new Date();
- var firstDay = new Date(date.getFullYear(), date.getMonth(), 1);
- var lastDay = new Date(date.getFullYear(), date.getMonth() + 1, 0);
+ let date = new Date();
+
 class Timesheet extends Component {
+
+    
 
     state = {
         user: [],
-        date: [firstDay, lastDay],
+        date: [new Date(date.getFullYear(), date.getMonth(), 1), new Date(date.getFullYear(), date.getMonth() + 1, 0)],
         isLoading: false, 
         results: [],
          value: ''
     }
+    // componentDidUpdate(prevProps) {
+    //     // Typical usage (don't forget to compare props):
+    //     let dateArray=this.getDateArray(new Date(this.state.date[0]), new Date(this.state.date[1]));
+    //     let worklogArray={};
+    //     console.log('dateArray updated', dateArray);
+    //   }
 
+    getWLDatesArray = () => {
+        let dateArray=this.getDateArray(new Date(this.state.date[0]), new Date(this.state.date[1]));
+        let worklogArray=[];
+        console.log('dateArray', dateArray);
+        dateArray.map(i=>worklogArray.push(i.toLocaleDateString()));
+        return worklogArray;
+    }
 
-    componentDidMount() {
+    setFiltedData = (users) => {
+        console.table('single uuuuuseeeers', users);
+        // const AllUsers = JSON.parse(JSON.stringify(users));
+        const WLDates = this.getWLDatesArray();
+        console.log('WLDates', WLDates);
+        users.map((user, index) => {
+            console.table('single user', user);
+            WLDates.forEach((date) => {
+                if(user.worklog.length) {
+                    console.log('single worklog user found');
+                    const wl = user.worklog.find(w=> new Date(w.created).toLocaleDateString() === date);
+                    if (wl) {
+                        users[index].worklogsData.push(wl.timeSpentSeconds);
+                    } else {
+                        users[index].worklogsData.push(0);
+                    }
+                } else {
+                    users[index].worklogsData.push(0);
+                }
+            })
+        })
+         this.setState({user:users})
+    }
+
+    componentDidMount() {        
         let api = localStorage.getItem('api');
         let url = localStorage.getItem('url');
         let email = localStorage.getItem('email');
@@ -60,7 +98,8 @@ class Timesheet extends Component {
                                 id: res[key].accountId,
                                 avatarUrls: Object.values(res[key].avatarUrls)[3],
                                 name: res[key].displayName,
-                                worklog: []
+                                worklog:[],
+                                worklogsData: []
                                 // datea:this.state.dateArray
                             });
 
@@ -84,28 +123,46 @@ class Timesheet extends Component {
                                 console.log("key arrrayy", issueKeys)
                                 console.log('issuessssssssssssssssssssssss', res.issues)
                             }).then(() => {
-                                issueKeys.map(i => {
+                                issueKeys.map((i, index) => {
                                     fetch(`${url}/rest/api/3/issue/${i}/worklog`, { method: 'GET', headers: headers })
                                         .then(res => res.json())
                                         .then(res => {
                                             for (let log in res.worklogs) {
                                                 res.worklogs.map(i => {
-                                                    if (i.author.key === arr[1].id) {
-
-                                                        arr[0].worklog.push((i.timeSpentSeconds) / 3600)
+                                                    const userIndex = arr.findIndex(u=>u.id===i.author.key)
+                                                    if (userIndex !== -1) {
+                                                
+                                                        arr[userIndex].worklog.push(i);
+                                                        
                                                     }
+
+                                                    // if (i.author.key === arr[1].id) {
+
+                                                    //     arr[0].worklog.push((i.timeSpentSeconds) / 3600)
+                                                    // }
                                                 })
+                                            }
+                                            if(issueKeys.length - 1 === index) {
+                                                console.log('arrrrrhere',arr);
+                                                this.setFiltedData(arr);
                                             }
                                             console.log('updated arrayyyyyyyyyyyyy', arr);
                                             console.log('its api call for iterating all issues', res)
                                         })
-                                });
+                                })
                             });
                     });
             });
 
     }
 
+    // componentDidUpdate(){
+
+    //     console.log('didupdate',prevProps)
+
+        
+
+    // }
    
 
     handleResultSelect = (e, { result }) => {
@@ -114,15 +171,17 @@ class Timesheet extends Component {
     }
 
     handleSearchChange = (e, { value }) => {
+
+
         this.setState({ isLoading: true, value })
 
         setTimeout(() => {
-            let data=this.state.user;
-
-            if (this.state.value.length < 1) return this.setState({users:data})
+            let completeData=this.state.user;
+            let a=this.state.user;
+            if (this.state.value.length < 1) return this.setState({user:a})
             const re = new RegExp(_.escapeRegExp(this.state.value), 'i')
             const isMatch = (data) => re.test(data.name)
-            const users = this.state.user.map(i => {
+            const users = completeData.map(i => {
                 return {...i, title: i.name, image: i.avatarUrls};
             })
             this.setState({
@@ -130,7 +189,7 @@ class Timesheet extends Component {
                 results: _.filter(users, isMatch),
             })
             this.setState({user:this.state.results})
-            console.log('results -- ', _.filter(data, isMatch));
+            console.log('results -- ', _.filter(completeData, isMatch));
         }, 300)
        
        
@@ -150,11 +209,8 @@ class Timesheet extends Component {
 
     handleDate = (date) => {
         console.log('new date =', date);
-        this.setState({ date })
-        // console.log(this.state.date[1]);
-
-        // this.getDateArray(this.state.date[0],this.state.date[1])
-
+        this.setState({ date:date })
+        
 
     }
 
@@ -169,6 +225,8 @@ class Timesheet extends Component {
 
         console.log('dateArrrrrrrrrrrrrrrrrrrrrrrrrrrr', dateArr)
         const { isLoading, value, results } = this.state
+
+        let renderData=this.state.user;
 
         return (
             <>
@@ -194,16 +252,7 @@ class Timesheet extends Component {
                         />
                     </Grid.Column>
                     <Grid.Column width={10}>
-                        {/* <Segment>
-                            <Header>State</Header>
-                            <pre style={{ overflowX: 'auto' }}>
-                                {JSON.stringify(this.state, null, 2)}
-                            </pre>
-                            <Header>Options</Header>
-                            <pre style={{ overflowX: 'auto' }}>
-                                {JSON.stringify(this.state.user, null, 2)}
-                            </pre>
-                        </Segment> */}
+                        
                     </Grid.Column>
                 </Grid>
 
@@ -213,7 +262,7 @@ class Timesheet extends Component {
                     <thead>
                         <tr>
                             <th style={{ width: '22px' }}>Users</th>
-                            <th > </th>
+                            <th> </th>
                             {
                                 dateArr.map(i => <th  key={i}>{moment(i).format(' D ddd')}</th>)
                             }
@@ -222,12 +271,12 @@ class Timesheet extends Component {
                     </thead>
                     <tbody>
                         {
-                            user = this.state.user.map(param =>
+                            user = renderData.map(param =>
                                 <User
                                     key={param.id}
                                     name={param.name}
                                     avatarUrls={param.avatarUrls}
-                                    time={param.worklog}
+                                    time={param.worklogsData}
                                 />
                             )}
 

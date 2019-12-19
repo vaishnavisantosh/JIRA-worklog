@@ -29,6 +29,9 @@
 // export default DatePicker;
 
 
+dateArray.map(i=>worklogArray[i.toLocaleDateString()] = 0);
+
+
 import React, { useReducer } from "react";
 import { DateRangeInput } from "@datepicker-react/styled";
 import { ThemeProvider } from "styled-components";
