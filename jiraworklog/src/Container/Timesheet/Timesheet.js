@@ -33,12 +33,14 @@ class Timesheet extends Component {
         results: [],
          value: ''
     }
-    // componentDidUpdate(prevProps) {
-    //     // Typical usage (don't forget to compare props):
-    //     let dateArray=this.getDateArray(new Date(this.state.date[0]), new Date(this.state.date[1]));
-    //     let worklogArray={};
-    //     console.log('dateArray updated', dateArray);
-    //   }
+    componentDidUpdate(props,PrevState) {
+        const[cstart,cend]=this.state.date;
+        const[pstart,pend]=PrevState.date;
+        if(cstart.toLocaleDateString()!==pstart.toLocaleDateString()||cend.toLocaleDateString()!==pend.toLocaleDateString()){
+            this.setFiltedData(this.state.user);
+        }
+       
+      }
 
     getWLDatesArray = () => {
         let dateArray=this.getDateArray(new Date(this.state.date[0]), new Date(this.state.date[1]));
@@ -55,12 +57,13 @@ class Timesheet extends Component {
         console.log('WLDates', WLDates);
         users.map((user, index) => {
             console.table('single user', user);
+            users[index].worklogsData=[];
             WLDates.forEach((date) => {
                 if(user.worklog.length) {
                     console.log('single worklog user found');
                     const wl = user.worklog.find(w=> new Date(w.created).toLocaleDateString() === date);
                     if (wl) {
-                        users[index].worklogsData.push(wl.timeSpentSeconds);
+                        users[index].worklogsData.push(wl.timeSpentSeconds/3600);
                     } else {
                         users[index].worklogsData.push(0);
                     }
@@ -70,6 +73,7 @@ class Timesheet extends Component {
             })
         })
          this.setState({user:users})
+         this.setState({allRecords:users})
     }
 
     componentDidMount() {        
@@ -123,6 +127,7 @@ class Timesheet extends Component {
                                 console.log("key arrrayy", issueKeys)
                                 console.log('issuessssssssssssssssssssssss', res.issues)
                             }).then(() => {
+                                let counter = 0;
                                 issueKeys.map((i, index) => {
                                     fetch(`${url}/rest/api/3/issue/${i}/worklog`, { method: 'GET', headers: headers })
                                         .then(res => res.json())
@@ -135,14 +140,10 @@ class Timesheet extends Component {
                                                         arr[userIndex].worklog.push(i);
                                                         
                                                     }
-
-                                                    // if (i.author.key === arr[1].id) {
-
-                                                    //     arr[0].worklog.push((i.timeSpentSeconds) / 3600)
-                                                    // }
                                                 })
                                             }
-                                            if(issueKeys.length - 1 === index) {
+                                            counter++;
+                                            if(issueKeys.length ===counter) {
                                                 console.log('arrrrrhere',arr);
                                                 this.setFiltedData(arr);
                                             }
@@ -156,14 +157,7 @@ class Timesheet extends Component {
 
     }
 
-    // componentDidUpdate(){
-
-    //     console.log('didupdate',prevProps)
-
-        
-
-    // }
-   
+    
 
     handleResultSelect = (e, { result }) => {
         console.log('single res', result);
@@ -171,7 +165,10 @@ class Timesheet extends Component {
     }
 
     handleSearchChange = (e, { value }) => {
-
+        if (!value) {
+            this.setState({user:this.state.allRecords, value: ''})
+            return;
+        }
 
         this.setState({ isLoading: true, value })
 
