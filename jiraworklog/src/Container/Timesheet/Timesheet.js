@@ -44,16 +44,20 @@ class Timesheet extends Component {
         users.map((user, index) => {
             console.table('single user', user);
             users[index].worklogsData = [];
+            users[index].commentArray=[];
             WLDates.forEach((date) => {
                 if (user.worklog.length) {
                     console.log('single worklog user found');
                     const wl = user.worklog.find(w => new Date(w.created).toLocaleDateString() === date);
                     if (wl) {
+                        users[index].commentArray.push(wl.comment.content[0].content[0].text);
                         users[index].worklogsData.push(wl.timeSpentSeconds / 3600);
                     } else {
+                        users[index].commentArray.push('');
                         users[index].worklogsData.push(0);
                     }
                 } else {
+                    users[index].commentArray.push('');
                     users[index].worklogsData.push(0);
                 }
             })
@@ -83,7 +87,8 @@ class Timesheet extends Component {
                                 avatarUrls: Object.values(res[key].avatarUrls)[3],
                                 name: res[key].displayName,
                                 worklog: [],
-                                worklogsData: []
+                                worklogsData: [],
+                                commentArray:[]
                                 // datea:this.state.dateArray
                             });
 
