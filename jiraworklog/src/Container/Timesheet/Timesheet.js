@@ -5,48 +5,34 @@ import DateRangePicker from '@wojtekmaj/react-daterange-picker'
 import 'bootstrap/dist/css/bootstrap.css';
 import { Search, Grid, Header, Segment } from 'semantic-ui-react'
 import _ from 'lodash';
-
-// import moment from "moment";
-// import {} from 'semantic-ui-react';
-//  import DateRangePicker from '../../Component/DateRangePicker/DateRangePicker';
-// import { DateRangePicker } from 'react-date-range';
-// import {DateRangePicker} from 'rsuite';
-// import 'rsuite/lib/styles/index.less'; 
-// or 
-// import 'rsuite/dist/styles/rsuite-default.css';
-
-
-const base64 = require('base-64');
+import Api from '../../utility';
 const moment = require('moment');
-
- const initialState = { isLoading: false, results: [], value: '' }
- let date = new Date();
+const initialState = { isLoading: false, results: [], value: '' }
+let date = new Date();
 
 class Timesheet extends Component {
-
-    
 
     state = {
         user: [],
         date: [new Date(date.getFullYear(), date.getMonth(), 1), new Date(date.getFullYear(), date.getMonth() + 1, 0)],
-        isLoading: false, 
+        isLoading: false,
         results: [],
-         value: ''
+        value: ''
     }
-    componentDidUpdate(props,PrevState) {
-        const[cstart,cend]=this.state.date;
-        const[pstart,pend]=PrevState.date;
-        if(cstart.toLocaleDateString()!==pstart.toLocaleDateString()||cend.toLocaleDateString()!==pend.toLocaleDateString()){
+    componentDidUpdate(props, PrevState) {
+        const [cstart, cend] = this.state.date;
+        const [pstart, pend] = PrevState.date;
+        if (cstart.toLocaleDateString() !== pstart.toLocaleDateString() || cend.toLocaleDateString() !== pend.toLocaleDateString()) {
             this.setFiltedData(this.state.user);
         }
-       
-      }
+
+    }
 
     getWLDatesArray = () => {
-        let dateArray=this.getDateArray(new Date(this.state.date[0]), new Date(this.state.date[1]));
-        let worklogArray=[];
+        let dateArray = this.getDateArray(new Date(this.state.date[0]), new Date(this.state.date[1]));
+        let worklogArray = [];
         console.log('dateArray', dateArray);
-        dateArray.map(i=>worklogArray.push(i.toLocaleDateString()));
+        dateArray.map(i => worklogArray.push(i.toLocaleDateString()));
         return worklogArray;
     }
 
@@ -57,13 +43,13 @@ class Timesheet extends Component {
         console.log('WLDates', WLDates);
         users.map((user, index) => {
             console.table('single user', user);
-            users[index].worklogsData=[];
+            users[index].worklogsData = [];
             WLDates.forEach((date) => {
-                if(user.worklog.length) {
+                if (user.worklog.length) {
                     console.log('single worklog user found');
-                    const wl = user.worklog.find(w=> new Date(w.created).toLocaleDateString() === date);
+                    const wl = user.worklog.find(w => new Date(w.created).toLocaleDateString() === date);
                     if (wl) {
-                        users[index].worklogsData.push(wl.timeSpentSeconds/3600);
+                        users[index].worklogsData.push(wl.timeSpentSeconds / 3600);
                     } else {
                         users[index].worklogsData.push(0);
                     }
@@ -72,37 +58,31 @@ class Timesheet extends Component {
                 }
             })
         })
-         this.setState({user:users})
-         this.setState({allRecords:users})
+        this.setState({ user: users })
+        this.setState({ allRecords: users })
     }
 
-    componentDidMount() {        
+    componentDidMount() {
         let api = localStorage.getItem('api');
         let url = localStorage.getItem('url');
         let email = localStorage.getItem('email');
-        let headers = new Headers();
-        headers.append("Content-Type", "application/json");
-        headers.append("Accept", "application/json");
-        headers.append('Authorization', 'Basic ' + base64.encode(`${email}:${api}`));
+
         let arr = [], totalIssues, issueKeys = [], projectKey;
 
-        fetch(`${url}/rest/api/2/project`, { method: 'GET', headers: headers })
-            .then(res => res.json())
+
+        Api.apicall(`${url}/rest/api/2/project`)
             .then(res => {
                 projectKey = res[0].key
                 console.log('it is 1st api which gives all project keys', projectKey)
-
             }).then(() => {
-
-                fetch(`${url}/rest/api/2/user/assignable/search?project=${projectKey}`, { method: 'GET', headers: headers })
-                    .then(res => res.json())
+                Api.apicall(`${url}/rest/api/2/user/assignable/search?project=${projectKey}`)
                     .then(res => {
                         for (let key in res) {
                             arr.push({
                                 id: res[key].accountId,
                                 avatarUrls: Object.values(res[key].avatarUrls)[3],
                                 name: res[key].displayName,
-                                worklog:[],
+                                worklog: [],
                                 worklogsData: []
                                 // datea:this.state.dateArray
                             });
@@ -114,9 +94,7 @@ class Timesheet extends Component {
                         console.log("state", this.state.user);
 
                     }).then(() => {
-
-                        fetch(`${url}/rest/api/2/search?jql=project=${projectKey}&fields=issue,name&startAt=0&maxResults=8000 `, { method: 'GET', headers: headers })
-                            .then(res => res.json())
+                        Api.apicall(`${url}/rest/api/2/search?jql=project=${projectKey}&fields=issue,name&startAt=0&maxResults=8000 `)
                             .then(res => {
                                 // totalIssues = res;
                                 for (let issuekey in res.issues) {
@@ -129,22 +107,23 @@ class Timesheet extends Component {
                             }).then(() => {
                                 let counter = 0;
                                 issueKeys.map((i, index) => {
-                                    fetch(`${url}/rest/api/3/issue/${i}/worklog`, { method: 'GET', headers: headers })
-                                        .then(res => res.json())
+
+                                    Api.apicall(`${url}/rest/api/3/issue/${i}/worklog`)
+
                                         .then(res => {
                                             for (let log in res.worklogs) {
                                                 res.worklogs.map(i => {
-                                                    const userIndex = arr.findIndex(u=>u.id===i.author.key)
+                                                    const userIndex = arr.findIndex(u => u.id === i.author.key)
                                                     if (userIndex !== -1) {
-                                                
+
                                                         arr[userIndex].worklog.push(i);
-                                                        
+
                                                     }
                                                 })
                                             }
                                             counter++;
-                                            if(issueKeys.length ===counter) {
-                                                console.log('arrrrrhere',arr);
+                                            if (issueKeys.length === counter) {
+                                                console.log('arrrrrhere', arr);
                                                 this.setFiltedData(arr);
                                             }
                                             console.log('updated arrayyyyyyyyyyyyy', arr);
@@ -157,7 +136,7 @@ class Timesheet extends Component {
 
     }
 
-    
+
 
     handleResultSelect = (e, { result }) => {
         console.log('single res', result);
@@ -166,30 +145,30 @@ class Timesheet extends Component {
 
     handleSearchChange = (e, { value }) => {
         if (!value) {
-            this.setState({user:this.state.allRecords, value: ''})
+            this.setState({ user: this.state.allRecords, value: '' })
             return;
         }
 
         this.setState({ isLoading: true, value })
 
         setTimeout(() => {
-            let completeData=this.state.user;
-            let a=this.state.user;
-            if (this.state.value.length < 1) return this.setState({user:a})
+            let completeData = this.state.user;
+            let a = this.state.user;
+            if (this.state.value.length < 1) return this.setState({ user: a })
             const re = new RegExp(_.escapeRegExp(this.state.value), 'i')
             const isMatch = (data) => re.test(data.name)
             const users = completeData.map(i => {
-                return {...i, title: i.name, image: i.avatarUrls};
+                return { ...i, title: i.name, image: i.avatarUrls };
             })
             this.setState({
                 isLoading: false,
                 results: _.filter(users, isMatch),
             })
-            this.setState({user:this.state.results})
+            this.setState({ user: this.state.results })
             console.log('results -- ', _.filter(completeData, isMatch));
         }, 300)
-       
-       
+
+
     }
 
 
@@ -206,8 +185,8 @@ class Timesheet extends Component {
 
     handleDate = (date) => {
         console.log('new date =', date);
-        this.setState({ date:date })
-        
+        this.setState({ date: date })
+
 
     }
 
@@ -223,17 +202,17 @@ class Timesheet extends Component {
         console.log('dateArrrrrrrrrrrrrrrrrrrrrrrrrrrr', dateArr)
         const { isLoading, value, results } = this.state
 
-        let renderData=this.state.user;
+        let renderData = this.state.user;
 
         return (
             <>
-                 <DateRangePicker 
+                <DateRangePicker
                     onChange={this.handleDate}
                     value={this.state.date}
                     format="y-MM-dd"
                 />
 
-                <Grid style={{display:'inline'}}>
+                <Grid style={{ display: 'inline' }}>
                     <Grid.Column width={6}>
                         <Search
                             aligned='right'
@@ -249,11 +228,11 @@ class Timesheet extends Component {
                         />
                     </Grid.Column>
                     <Grid.Column width={10}>
-                        
+
                     </Grid.Column>
                 </Grid>
 
-               
+
 
                 <Table responsive>
                     <thead>
@@ -261,7 +240,7 @@ class Timesheet extends Component {
                             <th style={{ width: '22px' }}>Users</th>
                             <th> </th>
                             {
-                                dateArr.map(i => <th  key={i}>{moment(i).format(' D ddd')}</th>)
+                                dateArr.map(i => <th key={i}>{moment(i).format(' D ddd')}</th>)
                             }
 
                         </tr>
