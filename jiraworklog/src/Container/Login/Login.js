@@ -4,7 +4,6 @@ import { Button, Grid, Header, Segment } from 'semantic-ui-react'
 import { Form, Input } from 'semantic-ui-react-form-validator';
 import 'semantic-ui-css/semantic.min.css';
 
-
 const base64 = require('base-64');
 
 class Login extends Component {
@@ -14,9 +13,7 @@ class Login extends Component {
     apitoken: "",
     apiurl: ""
   }
-
   
-
   fetchData = async () => {
   let headers = new Headers();
     headers.append("Content-Type", "application/json");

@@ -22,24 +22,11 @@ const User = (props) => {
     <>
 
       <tr>
-        {/* <Modal trigger={<Button>Show Modal</Button>}> */}
-          <Modal.Header>Select a Photo</Modal.Header>
-          <Modal.Content image>
-            <img wrapped size='medium' src={props.avatarUrls} />
-            <Modal.Description>
-              <Header>Default Profile Image</Header>
-              <p>
-                We've found the following gravatar image associated with your e-mail
-                address.
-        </p>
-              <p>Is it okay to use this photo?</p>
-            </Modal.Description>
-          </Modal.Content>
-        {/* </Modal> */}
+        
         <td><img style={{ width: '35px' }} src={props.avatarUrls} /> </td>
         <td style={{ fontSize: '15px', fontWeight: 'bold', Width: '800px' }}>{props.name}</td>
         {
-          props.time.map(i =><Modal trigger= {<td style={{ color: 'blue', cursor: 'pointer' }} onClick={handleShow}>{`${i}h`}</td>}></Modal>)
+          props.time.map(i =><td style={{ color: 'blue', cursor: 'pointer' }} onClick={handleShow}>{`${i}h`}</td>)
         }
 
       </tr>

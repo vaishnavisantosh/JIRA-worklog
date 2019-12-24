@@ -1,9 +1,10 @@
 import React, { Component } from 'react';
+import {withRouter} from 'react-router-dom';
 import { Table } from 'react-bootstrap';
 import User from '../../Component/User/User';
 import DateRangePicker from '@wojtekmaj/react-daterange-picker'
 import 'bootstrap/dist/css/bootstrap.css';
-import { Search, Grid, Header, Segment } from 'semantic-ui-react'
+import { Search, Grid, Header, Segment,Button } from 'semantic-ui-react'
 import _ from 'lodash';
 import Api from '../../utility';
 const moment = require('moment');
@@ -140,9 +141,7 @@ class Timesheet extends Component {
             });
 
     }
-
-
-
+    
     handleResultSelect = (e, { result }) => {
         console.log('single res', result);
         this.setState({ value: result.name })
@@ -184,19 +183,19 @@ class Timesheet extends Component {
             dateArray.push(new Date(currentDate));
             currentDate.setDate(currentDate.getDate() + 1);
         }
-        // this.setState({dateArr:dateArray});
         return dateArray;
     }
 
     handleDate = (date) => {
         console.log('new date =', date);
         this.setState({ date: date })
-
-
     }
 
-
-
+    gotoLoginPage=()=>{
+        localStorage.clear();
+        this.props.history.push('/');
+    }
+    
     render() {
         console.log("inside renderrrrrrr", this.state.user);
         let user;
@@ -211,7 +210,9 @@ class Timesheet extends Component {
 
         return (
             <>
-                <DateRangePicker
+                <Button  color='teal' style={{float:'right',margin:'10px 10px 0px 0px'}} onClick={this.gotoLoginPage}>Logout</Button>
+
+                <DateRangePicker 
                     onChange={this.handleDate}
                     value={this.state.date}
                     format="y-MM-dd"
@@ -233,12 +234,10 @@ class Timesheet extends Component {
                         />
                     </Grid.Column>
                     <Grid.Column width={10}>
-
+                        
                     </Grid.Column>
                 </Grid>
-
-
-
+                
                 <Table responsive>
                     <thead>
                         <tr>
@@ -274,4 +273,4 @@ class Timesheet extends Component {
 
 }
 
-export default Timesheet;
+export default withRouter(Timesheet);
