@@ -37,6 +37,14 @@ class Timesheet extends Component {
         return worklogArray;
     }
 
+    getTotal=(worklogArray)=>{
+        let horizontalTotal=[];
+        console.log('inside getTotal worklogArray',worklogArray);
+        worklogArray.map(i=>(horizontalTotal.push(i.worklogsData.reduce(function(a,b){return a+b},0))))
+
+        //console.log('horizontal total',horizontalTotal);
+        return horizontalTotal;
+    }
     setFiltedData = (users) => {
         console.table('single uuuuuseeeers', users);
         // const AllUsers = JSON.parse(JSON.stringify(users));
@@ -61,10 +69,15 @@ class Timesheet extends Component {
                     users[index].commentArray.push('');
                     users[index].worklogsData.push(0);
                 }
-            })
+            }
+             
+            )
         })
         this.setState({ user: users })
         this.setState({ allRecords: users })
+        console.log('users 12345',users);
+         this.getTotal(users);
+
     }
 
     componentDidMount() {
@@ -142,6 +155,7 @@ class Timesheet extends Component {
 
     }
     
+    
     handleResultSelect = (e, { result }) => {
         console.log('single res', result);
         this.setState({ value: result.name })
@@ -197,6 +211,7 @@ class Timesheet extends Component {
     }
     
     render() {
+        // console.log('complete worklogsssss',this.state.user.worklogsData);
         console.log("inside renderrrrrrr", this.state.user);
         let user;
         console.log('date stateeeeeeeeeeeeee', this.state.date);
@@ -207,6 +222,8 @@ class Timesheet extends Component {
         const { isLoading, value, results } = this.state
 
         let renderData = this.state.user;
+        let horizontalTotal=this.getTotal(renderData);
+        console.log('horizontal totallllllllllllllllllll',horizontalTotal);
 
         return (
             <>
@@ -234,7 +251,7 @@ class Timesheet extends Component {
                         />
                     </Grid.Column>
                     <Grid.Column width={10}>
-                        
+
                     </Grid.Column>
                 </Grid>
                 
@@ -242,7 +259,8 @@ class Timesheet extends Component {
                     <thead>
                         <tr>
                             <th style={{ width: '22px' }}>Users</th>
-                            <th> </th>
+                             <th></th>
+                             <th> Total</th>
                             {
                                 dateArr.map(i => <th key={i}>{moment(i).format(' D ddd')}</th>)
                             }
@@ -251,17 +269,15 @@ class Timesheet extends Component {
                     </thead>
                     <tbody>
                         {
-                            user = renderData.map(param =>
+                            user = renderData.map((param,index) =>
                                 <User
                                     key={param.id}
                                     name={param.name}
-                                    avatarUrls={param.avatarUrls}
+                                    avatarurls={param.avatarUrls}
                                     time={param.worklogsData}
+                                    horizontalTotal={horizontalTotal[index]}
                                 />
                             )}
-
-
-
                     </tbody>
                 </Table>
 

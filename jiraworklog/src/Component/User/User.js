@@ -23,8 +23,10 @@ const User = (props) => {
 
       <tr>
         
-        <td><img style={{ width: '35px' }} src={props.avatarUrls} /> </td>
+        <td><img style={{ width: '35px' }} src={props.avatarurls} /> </td>
         <td style={{ fontSize: '15px', fontWeight: 'bold', Width: '800px' }}>{props.name}</td>
+        <td> {props.horizontalTotal} </td>
+
         {
           props.time.map(i =><td style={{ color: 'blue', cursor: 'pointer' }} onClick={handleShow}>{`${i}h`}</td>)
         }
