@@ -40,7 +40,7 @@ class Timesheet extends Component {
     getTotal=(worklogArray)=>{
         let horizontalTotal=[];
         console.log('inside getTotal worklogArray',worklogArray);
-        worklogArray.map(i=>(horizontalTotal.push(i.worklogsData.reduce(function(a,b){return a+b},0))))
+        worklogArray.map(i=>(horizontalTotal.push((i.worklogsData.reduce((a,b) => parseInt(a)+parseInt(b),0)).toFixed(2))))
 
         //console.log('horizontal total',horizontalTotal);
         return horizontalTotal;
@@ -60,14 +60,14 @@ class Timesheet extends Component {
                     const wl = user.worklog.find(w => new Date(w.created).toLocaleDateString() === date);
                     if (wl) {
                         users[index].commentArray.push(wl.comment.content[0].content[0].text);
-                        users[index].worklogsData.push(wl.timeSpentSeconds / 3600);
+                        users[index].worklogsData.push(( wl.timeSpentSeconds / 3600).toFixed(2));
                     } else {
                         users[index].commentArray.push('');
-                        users[index].worklogsData.push(0);
+                        users[index].worklogsData.push((0).toFixed(2));
                     }
                 } else {
                     users[index].commentArray.push('');
-                    users[index].worklogsData.push(0);
+                    users[index].worklogsData.push((0).toFixed(2));
                 }
             }
              
@@ -275,6 +275,7 @@ class Timesheet extends Component {
                                     name={param.name}
                                     avatarurls={param.avatarUrls}
                                     time={param.worklogsData}
+                                    comments={param.commentArray}
                                     horizontalTotal={horizontalTotal[index]}
                                 />
                             )}
