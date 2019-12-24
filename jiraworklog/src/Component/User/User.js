@@ -36,21 +36,24 @@ const User = (props) => {
             i!=0.00 ?
           <td  style={{ color: 'blue', cursor: 'pointer' }} >{`${i}h`}</td>
           : <td  style={{ color: 'grey' }} >{`${i}h`}</td> } */}
-              <Modal trigger={
+         { i!=0.00?
+         <>
+              <Modal style={{width:'60%',height:'30%',margin:'10px 0px 0px 200px'}} trigger={
 
-                <td style={{ color: i != 0.00 ? 'blue' : 'grey', cursor: i != 0.00 ? 'pointer' : '' }}>{`${i}h`}</td>} centered={false}>
+                <td style={{ color: i != 0.00 ? 'blue' : 'grey', cursor: i != 0.00 ? 'pointer' : '' }}>{`${i}h`}</td>} centered={true}>
                 <Modal.Header>Worklogs</Modal.Header>
                 <Modal.Content>
                   {
                     <>
-                      <img style={{ width: '35px' }} src={props.avatarurls} />
+                      <img style={{ width: '35px',float:'right' }} src={props.avatarurls} />
                       <td style={{ color: i != 0.00 ? 'blue' : 'grey', cursor: i != 0.00 ? 'pointer' : '' }} >{`${i}h`}</td>
                       <p>{props.comments}</p>
                     </>}
                 </Modal.Content>
               </Modal>
-            </>
-
+                    </>:  <td  style={{ color: 'grey'}} >{`${i}h`}</td>
+                  }
+                  </>
           )
         }
 
