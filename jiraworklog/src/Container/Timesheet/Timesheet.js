@@ -18,7 +18,8 @@ class Timesheet extends Component {
         date: [new Date(date.getFullYear(), date.getMonth(), 1), new Date(date.getFullYear(), date.getMonth() + 1, 0)],
         isLoading: false,
         results: [],
-        value: ''
+        value: '',
+        verticalsum:[]
     }
     componentDidUpdate(props, PrevState) {
         const [cstart, cend] = this.state.date;
@@ -44,6 +45,33 @@ class Timesheet extends Component {
 
         //console.log('horizontal total',horizontalTotal);
         return horizontalTotal;
+    }
+
+    getverticalSum=(arr)=>{
+        let verticaltotal;
+        // arr.reduce(function(a, b){
+        //     return a.map(function(v,i){
+        //         verticaltotal.push(parseInt(v)+parseInt(b[i]));
+        //     })})
+        verticaltotal=arr.reduce((r, a) => a.map((b, i) => (parseInt( r[i]) || 0) +parseInt(b)), []);
+                console.log('verticalllllllllll sm',verticaltotal);
+
+                return verticaltotal;
+
+    }
+
+    getverticalTotalarray=() => {
+        let total=[];
+        let verticaltotal;
+       this.state.user.map((user,index)=>total.push(user.worklogsData));
+       console.log('totallllllllllllllllll vvvvvvvvv',total);
+        // this.setState({verticalsum:total})
+        if(total.length!=0)
+       return verticaltotal= this.getverticalSum(total);
+
+        else{return [];}
+        
+
     }
     setFiltedData = (users) => {
         console.table('single uuuuuseeeers', users);
@@ -211,6 +239,9 @@ class Timesheet extends Component {
     }
     
     render() {
+        let varr;
+       varr= this.getverticalTotalarray();
+       console.log('varrrrr',varr)
         // console.log('complete worklogsssss',this.state.user.worklogsData);
         console.log("inside renderrrrrrr", this.state.user);
         let user;
@@ -224,6 +255,8 @@ class Timesheet extends Component {
         let renderData = this.state.user;
         let horizontalTotal=this.getTotal(renderData);
         console.log('horizontal totallllllllllllllllllll',horizontalTotal);
+        let verticalSumOfTotalhorizonalTime=horizontalTotal.length!=0? horizontalTotal.reduce((a,b)=>parseInt(a)+parseInt(b)):0
+        console.log('complete horizontal',verticalSumOfTotalhorizonalTime)
 
         return (
             <>
@@ -260,7 +293,7 @@ class Timesheet extends Component {
                         <tr>
                             <th style={{ width: '22px' }}>Users</th>
                              <th></th>
-                             <th> Total</th>
+                             <th> &#931;</th>
                             {
                                 dateArr.map(i => <th key={i}>{moment(i).format(' D ddd')}</th>)
                             }
@@ -280,6 +313,21 @@ class Timesheet extends Component {
                                 />
                             )}
                     </tbody>
+
+                    <tfoot>
+                        <tr>
+                        <th></th>
+                        <th>Total</th>
+                        
+                        <th>{ `${verticalSumOfTotalhorizonalTime}h`}</th>
+                        {
+                            varr.length!=0?
+                            varr.map(i=><th>{`${i.toFixed(2)}h`}</th>):0
+                        }
+                       
+                        </tr>
+                    </tfoot>
+
                 </Table>
 
             </>
