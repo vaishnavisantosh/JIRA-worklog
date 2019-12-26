@@ -3,6 +3,7 @@ import {withRouter} from 'react-router-dom';
 import { Table } from 'react-bootstrap';
 import User from '../../Component/User/User';
 import DateRangePicker from '@wojtekmaj/react-daterange-picker'
+// import DateRangePicker from '@wojtekmaj/react-daterange-picker/dist/entry.nostyle';
 import 'bootstrap/dist/css/bootstrap.css';
 import { Search, Grid, Header, Segment,Button } from 'semantic-ui-react'
 import _ from 'lodash';
@@ -261,16 +262,18 @@ class Timesheet extends Component {
         return (
             <>
                 <Button  color='teal' style={{float:'right',margin:'10px 10px 0px 0px'}} onClick={this.gotoLoginPage}>Logout</Button>
-
-                <DateRangePicker 
+                <div style={{margin:'10px 5px 0px 10px',display:'inline'}}>
+                <DateRangePicker style={{margin:'20px 10px 0px 10px'}}
                     onChange={this.handleDate}
                     value={this.state.date}
                     format="y-MM-dd"
                 />
+                </div>
+                
 
                 <Grid style={{ display: 'inline' }}>
-                    <Grid.Column width={6}>
-                        <Search
+                    <Grid.Column width={10}>
+                        <Search style={{width:'100%'}}
                             aligned='right'
                             loading={isLoading}
                             name="name"
@@ -295,7 +298,7 @@ class Timesheet extends Component {
                              <th></th>
                              <th> &#931;</th>
                             {
-                                dateArr.map(i => <th key={i}>{moment(i).format(' D ddd')}</th>)
+                                dateArr.map(i => <td key={i}>{moment(i).format(' D ddd')}</td>)
                             }
 
                         </tr>
@@ -312,17 +315,18 @@ class Timesheet extends Component {
                                     horizontalTotal={horizontalTotal[index]}
                                 />
                             )}
+    <tr><td></td><td></td><td></td>{dateArr.map(i=><td></td>)}</tr>
                     </tbody>
 
                     <tfoot>
                         <tr>
-                        <th></th>
-                        <th>Total</th>
+                        <td></td>
+                        <td>Total</td>
                         
-                        <th>{ `${verticalSumOfTotalhorizonalTime}h`}</th>
+                        <td>{ `${verticalSumOfTotalhorizonalTime}h`}</td>
                         {
                             varr.length!=0?
-                            varr.map(i=><th>{`${i.toFixed(2)}h`}</th>):0
+                            varr.map(i=><td>{`${i.toFixed(2)}h`}</td>):0
                         }
                        
                         </tr>

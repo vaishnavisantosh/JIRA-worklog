@@ -34,28 +34,30 @@ let comment;
             <>
                    
 
-              {/* {
-            i!=0.00 ?
-          <td  style={{ color: 'blue', cursor: 'pointer' }} >{`${i}h`}</td>
-          : <td  style={{ color: 'grey' }} >{`${i}h`}</td> } */}
+              
          { i!=0.00?
          
          <>
-              <Modal style={{width:'60%',height:'30%',margin:'10px 0px 0px 200px'}} trigger={
+              <Modal onClose={handleClose} style={{width:'70%',height:'40%',margin:'10px 0px 0px 200px'}} trigger={
 
                 <td style={{ color: i != 0.00 ? 'blue' : 'grey', cursor: i != 0.00 ? 'pointer' : '' }}>{`${i}h`}</td>} centered={true}>
-                <Modal.Header>Worklogs</Modal.Header>
+                <p style={{fontWeight: 'bold',margin: '10px',fontSize: 'large'}}>Worklogs</p>
                 <Modal.Content>
                   {
                     
                     <>
-                      <img style={{ width: '35px',float:'right' }} src={props.avatarurls} />
-                      <td style={{ color: i != 0.00 ? 'blue' : 'grey', cursor: i != 0.00 ? 'pointer' : '' }} >{`${i}h`}</td>
-                        {/* <>{ i=props.comments.map((i) => <p>{i}</p>) */}
-                  {props.comments.map((comment,cindex)=>cindex===index?<p>{comment}</p>:null)}
+                    <p style={{display:'inline',margin:'0px 600px 0px 0px'}}>comment</p>
+                    <p style={{display:'inline'}}>Time spent</p>
+                    <hr/>
+                    {props.comments.map((comment,cindex)=>cindex===index?<p style={{display:'inline-block'}}>{`-${comment}`}</p>:null)}
+                    <p style={{ color: 'gray',display:'inline',float:'right',margin:'0px 160px 0px 0px' }} >{`${i}h`}</p>
+                      <img style={{ width: '35px',float:'right',margin: '-5px -95px 0px 0px' }} src={props.avatarurls} />
+                      
+                      <hr/>
+                  
+                    <Button color='teal' >close</Button>
 
-
-                      {/* {props.comments.map(comment,cindex)=} */}
+                      
                     </>}
                 </Modal.Content>
               </Modal>
