@@ -86,7 +86,7 @@ class Timesheet extends Component {
             WLDates.forEach((date) => {
                 if (user.worklog.length) {
                     console.log('single worklog user found');
-                    const wl = user.worklog.find(w => new Date(w.created).toLocaleDateString() === date);
+                    const wl = user.worklog.find(w => new Date(w.started).toLocaleDateString() === date);
                     if (wl) {
                         users[index].commentArray.push(wl.comment.content[0].content[0].text);
                         users[index].worklogsData.push(( wl.timeSpentSeconds / 3600).toFixed(2));
@@ -272,7 +272,7 @@ class Timesheet extends Component {
                 
 
                 <Grid style={{ display: 'inline' }}>
-                    <Grid.Column width={10}>
+                    <Grid.Column width={4} style={{padding:'0px 0px 0px 20px'}}>
                         <Search style={{width:'100%'}}
                             aligned='right'
                             loading={isLoading}
@@ -291,12 +291,12 @@ class Timesheet extends Component {
                     </Grid.Column>
                 </Grid>
                 
-                <Table responsive>
+                <Table responsive style={{borderBottom:'1px solid  rgba(211,211,211, 0.8)'}} >
                     <thead>
                         <tr>
                             <th style={{ width: '22px' }}>Users</th>
                              <th></th>
-                             <th> &#931;</th>
+                             <th style={{borderRight:'1px solid rgba(211,211,211, 0.8)'}}> &#931;</th>
                             {
                                 dateArr.map(i => <td key={i}>{moment(i).format(' D ddd')}</td>)
                             }
@@ -313,26 +313,29 @@ class Timesheet extends Component {
                                     time={param.worklogsData}
                                     comments={param.commentArray}
                                     horizontalTotal={horizontalTotal[index]}
+                                    datearray={dateArr}
                                 />
                             )}
-    <tr><td></td><td></td><td></td>{dateArr.map(i=><td></td>)}</tr>
+    <tr><td></td><td></td><td style={{borderRight:'1px solid rgba(211,211,211, 0.8)'}}></td>{dateArr.map(i=><td></td>)}</tr>
                     </tbody>
 
                     <tfoot>
                         <tr>
                         <td></td>
-                        <td>Total</td>
+                        <td style={{fontWeight:'bold'}}>Total</td>
                         
-                        <td>{ `${verticalSumOfTotalhorizonalTime}h`}</td>
+                        <td style={{borderRight:'1px solid rgba(211,211,211, 0.8)',fontWeight:'bold'}}>{ `${verticalSumOfTotalhorizonalTime}h`}</td>
                         {
                             varr.length!=0?
-                            varr.map(i=><td>{`${i.toFixed(2)}h`}</td>):0
+                            varr.map(i=><td style={{fontWeight:'bold'}}>{`${i.toFixed(2)}h`}</td>):0
                         }
                        
                         </tr>
+                       
                     </tfoot>
-
+                       
                 </Table>
+                
 
             </>
         );
