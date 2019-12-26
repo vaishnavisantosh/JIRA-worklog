@@ -3,9 +3,8 @@ import { withRouter } from 'react-router-dom';
 import { Button, Grid, Header, Segment } from 'semantic-ui-react'
 import { Form, Input } from 'semantic-ui-react-form-validator';
 import 'semantic-ui-css/semantic.min.css';
-
-const base64 = require('base-64');
-let msg;
+import Api from '../../utility';
+import base64 from 'base-64';
 class Login extends Component {
 
   state = {
@@ -13,60 +12,38 @@ class Login extends Component {
     apitoken: "",
     apiurl: ""
   }
-  
-  fetchData =async() => {
-  let headers = new Headers();
+
+  fetchData = async () => {
+    let headers = new Headers();
     headers.append("Content-Type", "application/json");
     headers.append("Accept", "application/json");
     headers.append('Authorization', 'Basic ' + base64.encode(`${this.state.email}:${this.state.apitoken}`));
-    let arr=[];
     
-    
-
     try {
-      const response = await fetch(`${this.state.apiurl}/rest/api/2/project`, { method: 'GET', headers: headers });
-      if (!response.ok) {
+      const response = await Api.apicall(`${this.state.apiurl}/rest/api/2/project`, { method: 'GET', headers: headers });
+      if (!response) {
         throw new Error('Network response was not ok.');
       }
-      localStorage.setItem('api',this.state.apitoken)
-            localStorage.setItem('url',this.state.apiurl)
-            localStorage.setItem('email',this.state.email)
-            this.props.history.push('/timesheet')
+      localStorage.setItem('api', this.state.apitoken)
+      localStorage.setItem('url', this.state.apiurl)
+      localStorage.setItem('email', this.state.email)
+      this.props.history.push('/timesheet')
     } catch (error) {
-    //  return msg='wrong credientials';
       alert('credientials are not correct!')
     }
-         
-            
-            
-            }
-
-        
-
-        
-      
-    
-        
-
-
-
-
- 
-
- 
-  
+  }
   render() {
-    
-    let { email, apitoken, apiurl } = this.state;
-    
-    let LoginForm =
+
+    const { email, apitoken, apiurl } = this.state;
+
+    const LoginForm =
       <Grid textAlign='center' style={{ height: '100vh' }} verticalAlign='middle'>
         <Grid.Column style={{ maxWidth: 450 }}>
           <Header as='h2' color='blue' textAlign='center'>
             Log-in to your account
           </Header>
           <Form size='large'
-             onSubmit={this.fetchData}>
+            onSubmit={this.fetchData}>
             <Segment stacked>
               <Input fluid icon='user'
                 iconPosition='left'
@@ -107,11 +84,11 @@ class Login extends Component {
               </Button>
             </Segment>
           </Form>
-  
+
         </Grid.Column>
       </Grid>
-      
-      return (
+
+    return (
       <>
         {LoginForm}
       </>

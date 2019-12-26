@@ -1,13 +1,12 @@
 import React, { Component } from 'react';
 import {withRouter} from 'react-router-dom';
-import { Table } from 'react-bootstrap';
 import User from '../../Component/User/User';
 import DateRangePicker from '@wojtekmaj/react-daterange-picker'
-import 'bootstrap/dist/css/bootstrap.css';
 import { Search, Grid,Button } from 'semantic-ui-react'
-import _ from 'lodash';
+import {escapeRegExp,filter,debounce} from 'lodash';
 import Api from '../../utility';
-const moment = require('moment');
+import moment from 'moment';
+import './Timesheet.css';
 let date = new Date();
 
 class Timesheet extends Component {
@@ -41,8 +40,6 @@ class Timesheet extends Component {
         let horizontalTotal=[];
         console.log('inside getTotal worklogArray',worklogArray);
         worklogArray.map(i=>(horizontalTotal.push((i.worklogsData.reduce((a,b) => parseInt(a)+parseInt(b),0)).toFixed(2))))
-
-        //console.log('horizontal total',horizontalTotal);
         return horizontalTotal;
     }
 
@@ -61,7 +58,7 @@ class Timesheet extends Component {
         let verticaltotal;
        this.state.user.map((user,index)=>total.push(user.worklogsData));
        console.log('totallllllllllllllllll vvvvvvvvv',total);
-        if(total.length!=0)
+        if(total.length!==0)
        return verticaltotal= this.getverticalSum(total);
 
         else{return [];}
@@ -103,13 +100,11 @@ class Timesheet extends Component {
     }
 
     componentDidMount() {
-        let api = localStorage.getItem('api');
-        let url = localStorage.getItem('url');
-        let email = localStorage.getItem('email');
-
-        let arr = [], totalIssues, issueKeys = [], projectKey;
-
-
+        
+        const url = localStorage.getItem('url');
+        const arr = [], issueKeys = [];
+        let projectKey;
+        
         Api.apicall(`${url}/rest/api/2/project`)
             .then(res => {
                 projectKey = res[0].key
@@ -184,24 +179,23 @@ class Timesheet extends Component {
             this.setState({ user: this.state.allRecords, value: '' })
             return;
         }
-
         this.setState({ isLoading: true, value })
 
         setTimeout(() => {
-            let completeData = this.state.user;
-            let a = this.state.user;
+            const completeData = this.state.user;
+            const a = this.state.user;
             if (this.state.value.length < 1) return this.setState({ user: a })
-            const re = new RegExp(_.escapeRegExp(this.state.value), 'i')
+            const re = new RegExp(escapeRegExp(this.state.value), 'i')
             const isMatch = (data) => re.test(data.name)
             const users = completeData.map(i => {
                 return { ...i, title: i.name, image: i.avatarUrls };
             })
             this.setState({
                 isLoading: false,
-                results: _.filter(users, isMatch),
+                results: filter(users, isMatch),
             })
             this.setState({ user: this.state.results })
-            console.log('results -- ', _.filter(completeData, isMatch));
+            console.log('results -- ', filter(completeData, isMatch));
         }, 300)
 
 
@@ -209,7 +203,7 @@ class Timesheet extends Component {
 
 
     getDateArray = (start, end) => {
-        var dateArray = new Array();
+        var dateArray = [];
         var currentDate = start;
         while (currentDate <= end) {
             dateArray.push(new Date(currentDate));
@@ -233,17 +227,17 @@ class Timesheet extends Component {
        varr= this.getverticalTotalarray();
        console.log('varrrrr',varr)
         console.log("inside renderrrrrrr", this.state.user);
-        let user;
+        
         console.log('date stateeeeeeeeeeeeee', this.state.date);
         let dateArr = this.getDateArray(new Date(this.state.date[0]), new Date(this.state.date[1]));
 
         console.log('dateArrrrrrrrrrrrrrrrrrrrrrrrrrrr', dateArr)
-        const { isLoading, value, results } = this.state
+        const { isLoading, value } = this.state
 
         let renderData = this.state.user;
         let horizontalTotal=this.getTotal(renderData);
         console.log('horizontal totallllllllllllllllllll',horizontalTotal);
-        let verticalSumOfTotalhorizonalTime=horizontalTotal.length!=0? horizontalTotal.reduce((a,b)=>parseInt(a)+parseInt(b)):0
+        let verticalSumOfTotalhorizonalTime=horizontalTotal.length!==0? horizontalTotal.reduce((a,b)=>parseInt(a)+parseInt(b)):0
         console.log('complete horizontal',verticalSumOfTotalhorizonalTime)
 
         return (
@@ -266,7 +260,7 @@ class Timesheet extends Component {
                             loading={isLoading}
                             name="name"
                             onResultSelect={this.handleResultSelect}
-                            onSearchChange={_.debounce(this.handleSearchChange, 500, {
+                            onSearchChange={debounce(this.handleSearchChange, 500, {
                                 leading: true,
                             })}
                             results={this.state.results}
@@ -278,8 +272,8 @@ class Timesheet extends Component {
 
                     </Grid.Column>
                 </Grid>
-                
-                <Table responsive style={{borderBottom:'1px solid  rgba(211,211,211, 0.8)'}} >
+                <div style={{overflowX:'auto'}}>
+                <table  style={{borderBottom:'1px solid  rgba(211,211,211, 0.8)'}} >
                     <thead>
                         <tr>
                             <th style={{ width: '22px' }}>Users</th>
@@ -293,7 +287,7 @@ class Timesheet extends Component {
                     </thead>
                     <tbody>
                         {
-                            user = renderData.map((param,index) =>
+                            renderData.map((param,index) =>
                                 <User
                                     key={param.id}
                                     name={param.name}
@@ -314,7 +308,7 @@ class Timesheet extends Component {
                         
                         <td style={{borderRight:'1px solid rgba(211,211,211, 0.8)',fontWeight:'bold'}}>{ `${verticalSumOfTotalhorizonalTime}h`}</td>
                         {
-                            varr.length!=0?
+                            varr.length!==0?
                             varr.map(i=><td style={{fontWeight:'bold'}}>{`${i.toFixed(2)}h`}</td>):0
                         }
                        
@@ -322,8 +316,8 @@ class Timesheet extends Component {
                        
                     </tfoot>
                        
-                </Table>
-                
+                </table>
+                </div>
 
             </>
         );

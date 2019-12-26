@@ -1,0 +1,16 @@
+table {
+    border-collapse: collapse;
+    border-spacing: 0;
+    width: 100%;
+    border: 1px solid rgba(211,211,211, 0.8);
+  }
+
+  th, td {
+    text-align: left;
+    padding: 8px;
+  }
+  
+  tr{
+      border-bottom: 2px solid rgba(211,211,211, 0.8);
+  }
+ 
