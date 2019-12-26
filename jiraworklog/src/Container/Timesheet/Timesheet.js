@@ -286,7 +286,7 @@ class Timesheet extends Component {
                              <th></th>
                              <th style={{borderRight:'1px solid rgba(211,211,211, 0.8)'}}> &#931;</th>
                             {
-                                dateArr.map(i => <td key={i} >{moment(i).format('Dddd')}</td>)
+                                dateArr.map(i => <td key={i} style={{fontSize:'19px',fontWeight:'normal'}} >{moment(i).format('D ddd')}</td>)
                             }
 
                         </tr>

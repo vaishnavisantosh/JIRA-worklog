@@ -45,7 +45,7 @@ setShow(false);
          { i!=0.00?
          
          <>
-              <Modal  style={{width:'70%',height:'40%',margin:'10px 0px 0px 200px'}} trigger={
+              <Modal onOpen={handleShow} open={show}  style={{width:'70%',height:'40%',margin:'10px 0px 0px 200px'}} trigger={
 
                 <td style={{ color: i != 0.00 ? 'blue' : 'grey', cursor: i != 0.00 ? 'pointer' : '' }}>{`${i}h`}</td>} centered={true}>
                 <p style={{fontWeight: 'bold',margin: '10px',fontSize: 'large'}}>Worklogs</p>
@@ -65,7 +65,7 @@ setShow(false);
 
                       <hr/>
                   
-                    {/* <Button color='teal'  >close</Button> */}
+                    <Button style={{float:'right'}} color='blue' onClick={handleClose} >close</Button>
 
                       
                     </>}

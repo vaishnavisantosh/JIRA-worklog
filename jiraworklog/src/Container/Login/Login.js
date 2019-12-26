@@ -5,7 +5,7 @@ import { Form, Input } from 'semantic-ui-react-form-validator';
 import 'semantic-ui-css/semantic.min.css';
 
 const base64 = require('base-64');
-
+let msg;
 class Login extends Component {
 
   state = {
@@ -14,52 +14,40 @@ class Login extends Component {
     apiurl: ""
   }
   
-  fetchData = async () => {
+  fetchData =async() => {
   let headers = new Headers();
     headers.append("Content-Type", "application/json");
     headers.append("Accept", "application/json");
     headers.append('Authorization', 'Basic ' + base64.encode(`${this.state.email}:${this.state.apitoken}`));
     let arr=[];
-    try{
-    let res = await fetch(`${this.state.apiurl}/rest/api/2/user/assignable/search?project=REAC`, { method: 'GET', headers: headers });
-    res = res.json();
-    localStorage.setItem('api',this.state.apitoken);
-    localStorage.setItem('url',this.state.apiurl);
-    localStorage.setItem('email',this.state.email);
+    
+    
 
-    // console.log('inside try');
-    this.props.history.push('/timesheet');
-        // .then(res => res.json())
-        // .then(res => {
-        //   if(res.length<=0){
-        //     console.log('credientials are not correct!');
-        //   }
-        //   else{
-        //     for(let key in res){
-        //         arr.push({
-        //             id:res[key].accountId,
-        //             avatarUrls:Object.values(res[key].avatarUrls)[3],
-        //             name:res[key].displayName
-
-        //         });
-        //       }
-        //     }
-        //     console.log("response", res);
-        //     console.log("user array",arr)
-        //     this.setState({user:arr})
-        //     console.log("state",this.state.user);
-        //     this.props.history.push('/timesheet');
-
-
-        // }
-
-        // );
-      
+    try {
+      const response = await fetch(`${this.state.apiurl}/rest/api/2/project`, { method: 'GET', headers: headers });
+      if (!response.ok) {
+        throw new Error('Network response was not ok.');
       }
-        catch(error){
-          console.log("worng crediential",error)
-        }
-}
+      localStorage.setItem('api',this.state.apitoken)
+            localStorage.setItem('url',this.state.apiurl)
+            localStorage.setItem('email',this.state.email)
+            this.props.history.push('/timesheet')
+    } catch (error) {
+    //  return msg='wrong credientials';
+      alert('credientials are not correct!')
+    }
+         
+            
+            
+            }
+
+        
+
+        
+      
+    
+        
+
 
 
 
@@ -68,7 +56,9 @@ class Login extends Component {
  
   
   render() {
+    
     let { email, apitoken, apiurl } = this.state;
+    
     let LoginForm =
       <Grid textAlign='center' style={{ height: '100vh' }} verticalAlign='middle'>
         <Grid.Column style={{ maxWidth: 450 }}>
@@ -117,6 +107,7 @@ class Login extends Component {
               </Button>
             </Segment>
           </Form>
+  
         </Grid.Column>
       </Grid>
       
