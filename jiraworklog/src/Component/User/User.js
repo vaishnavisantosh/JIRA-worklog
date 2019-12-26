@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
-// import { Button, Table,Modal } from 'react-bootstrap';
-// import 'bootstrap/dist/css/bootstrap.css';
-import { Button, Header, Icon, Modal, Image } from 'semantic-ui-react'
+
+import { Button,Modal } from 'semantic-ui-react'
 
 const moment = require('moment');
 const base64 = require('base-64');
@@ -9,10 +8,7 @@ const base64 = require('base-64');
 
 
 const User = (props) => {
-  const modalFuction = () => {
-    console.log("model function called")
-    alert('model callled');
-  }
+  
 let comment;
   const [show, setShow] = useState(false);
 

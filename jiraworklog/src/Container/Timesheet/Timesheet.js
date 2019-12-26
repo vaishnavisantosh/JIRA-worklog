@@ -3,13 +3,11 @@ import {withRouter} from 'react-router-dom';
 import { Table } from 'react-bootstrap';
 import User from '../../Component/User/User';
 import DateRangePicker from '@wojtekmaj/react-daterange-picker'
-// import DateRangePicker from '@wojtekmaj/react-daterange-picker/dist/entry.nostyle';
 import 'bootstrap/dist/css/bootstrap.css';
-import { Search, Grid, Header, Segment,Button } from 'semantic-ui-react'
+import { Search, Grid,Button } from 'semantic-ui-react'
 import _ from 'lodash';
 import Api from '../../utility';
 const moment = require('moment');
-const initialState = { isLoading: false, results: [], value: '' }
 let date = new Date();
 
 class Timesheet extends Component {
@@ -50,10 +48,7 @@ class Timesheet extends Component {
 
     getverticalSum=(arr)=>{
         let verticaltotal;
-        // arr.reduce(function(a, b){
-        //     return a.map(function(v,i){
-        //         verticaltotal.push(parseInt(v)+parseInt(b[i]));
-        //     })})
+        
         verticaltotal=arr.reduce((r, a) => a.map((b, i) => (parseInt( r[i]) || 0) +parseInt(b)), []);
                 console.log('verticalllllllllll sm',verticaltotal);
 
@@ -66,7 +61,6 @@ class Timesheet extends Component {
         let verticaltotal;
        this.state.user.map((user,index)=>total.push(user.worklogsData));
        console.log('totallllllllllllllllll vvvvvvvvv',total);
-        // this.setState({verticalsum:total})
         if(total.length!=0)
        return verticaltotal= this.getverticalSum(total);
 
@@ -76,7 +70,6 @@ class Timesheet extends Component {
     }
     setFiltedData = (users) => {
         console.table('single uuuuuseeeers', users);
-        // const AllUsers = JSON.parse(JSON.stringify(users));
         const WLDates = this.getWLDatesArray();
         console.log('WLDates', WLDates);
         users.map((user, index) => {
@@ -132,7 +125,6 @@ class Timesheet extends Component {
                                 worklog: [],
                                 worklogsData: [],
                                 commentArray:[]
-                                // datea:this.state.dateArray
                             });
 
                         }
@@ -144,12 +136,9 @@ class Timesheet extends Component {
                     }).then(() => {
                         Api.apicall(`${url}/rest/api/2/search?jql=project=${projectKey}&fields=issue,name&startAt=0&maxResults=8000 `)
                             .then(res => {
-                                // totalIssues = res;
                                 for (let issuekey in res.issues) {
                                     issueKeys.push(res.issues[issuekey].key);
                                 }
-                                // console.log('isuessssssss',totalIssues);
-                                // console.log('res.issue',res.issues)
                                 console.log("key arrrayy", issueKeys)
                                 console.log('issuessssssssssssssssssssssss', res.issues)
                             }).then(() => {
@@ -243,11 +232,9 @@ class Timesheet extends Component {
         let varr;
        varr= this.getverticalTotalarray();
        console.log('varrrrr',varr)
-        // console.log('complete worklogsssss',this.state.user.worklogsData);
         console.log("inside renderrrrrrr", this.state.user);
         let user;
         console.log('date stateeeeeeeeeeeeee', this.state.date);
-        // const datesArr = JSON.parse(JSON.stringify(this.state.date))
         let dateArr = this.getDateArray(new Date(this.state.date[0]), new Date(this.state.date[1]));
 
         console.log('dateArrrrrrrrrrrrrrrrrrrrrrrrrrrr', dateArr)
@@ -267,6 +254,7 @@ class Timesheet extends Component {
                     onChange={this.handleDate}
                     value={this.state.date}
                     format="y-MM-dd"
+                    clearIcon={null}
                 />
                 </div>
                 
@@ -298,7 +286,7 @@ class Timesheet extends Component {
                              <th></th>
                              <th style={{borderRight:'1px solid rgba(211,211,211, 0.8)'}}> &#931;</th>
                             {
-                                dateArr.map(i => <td key={i}>{moment(i).format(' D ddd')}</td>)
+                                dateArr.map(i => <td key={i} >{moment(i).format('Dddd')}</td>)
                             }
 
                         </tr>
