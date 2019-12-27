@@ -8,7 +8,6 @@ export default {
         const email = localStorage.getItem('email');
         const headers = { Authorization: 'Basic ' + base64.encode(`${email}:${api}`), "Content-Type": 'application/json', Accept: 'application/json'   };
         response = await axios.get(url, { headers });
-        console.log('response', response);
         return response.data;
     }
 }

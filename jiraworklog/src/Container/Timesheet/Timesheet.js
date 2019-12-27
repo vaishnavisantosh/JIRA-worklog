@@ -24,7 +24,6 @@ class Timesheet extends Component {
         const {users}=this.state;
         const [ currentStateStartMonthDate,currentStateMonthEndDate] = this.state.date;
         const [ prevStateStartMonthDate,prevStateMonthEndDate] = PrevState.date;
-        
         if (currentStateStartMonthDate.toLocaleDateString() !== prevStateStartMonthDate.toLocaleDateString() || currentStateMonthEndDate.toLocaleDateString() !== prevStateMonthEndDate.toLocaleDateString()) {
             this.setFiltedData(users);
         }
@@ -41,7 +40,7 @@ class Timesheet extends Component {
 
     getTotalOfWorklogs = (worklogArray) => {
         const horizontalTotal = [];
-        worklogArray.map(i => (horizontalTotal.push((i.worklogsData.reduce((a, b) => parseInt(a) + parseInt(b), 0)).toFixed(2))))
+        worklogArray.forEach(i => (horizontalTotal.push((i.worklogsData.reduce((a, b) => parseInt(a) + parseInt(b), 0)).toFixed(2))))
         return horizontalTotal;
     }
 
@@ -92,7 +91,7 @@ class Timesheet extends Component {
     componentDidMount() {
 
         const url = localStorage.getItem('url');
-        const arr = [], issueKeys = [];
+        const usersArray = [], issueKeys = [];
         let projectKey;
 
         Api.apicall(`${url}/rest/api/2/project`)
@@ -102,7 +101,7 @@ class Timesheet extends Component {
                 Api.apicall(`${url}/rest/api/2/user/assignable/search?project=${projectKey}`)
                     .then(res => {
                         for (let key in res) {
-                            arr.push({
+                            usersArray.push({
                                 id: res[key].accountId,
                                 avatarUrls: Object.values(res[key].avatarUrls)[3],
                                 name: res[key].displayName,
@@ -112,7 +111,7 @@ class Timesheet extends Component {
                             });
 
                         }
-                        this.setState({ users: arr })
+                        this.setState({ users: usersArray })
 
                     }).then(() => {
                         Api.apicall(`${url}/rest/api/2/search?jql=project=${projectKey}&fields=issue,name&startAt=0&maxResults=8000 `)
@@ -129,10 +128,10 @@ class Timesheet extends Component {
                                         .then(res => {
                                             for (let log in res.worklogs) {
                                                 res.worklogs.map(i => {
-                                                    const userIndex = arr.findIndex(u => u.id === i.author.key)
+                                                    const userIndex = usersArray.findIndex(u => u.id === i.author.key)
                                                     if (userIndex !== -1) {
 
-                                                        arr[userIndex].worklog.push(i);
+                                                        usersArray[userIndex].worklog.push(i);
 
                                                     }
                                                     return 1;
@@ -141,7 +140,7 @@ class Timesheet extends Component {
                                             }
                                             counter++;
                                             if (issueKeys.length === counter) {
-                                                this.setFiltedData(arr);
+                                                this.setFiltedData(usersArray);
                                             }
                                         })
                                         return 1;
