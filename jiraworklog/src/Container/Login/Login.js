@@ -3,7 +3,7 @@ import { withRouter } from 'react-router-dom';
 import { Button, Grid, Header, Segment } from 'semantic-ui-react'
 import { Form, Input } from 'semantic-ui-react-form-validator';
 import 'semantic-ui-css/semantic.min.css';
-import Api from '../../utility';
+
 import base64 from 'base-64';
 class Login extends Component {
 
@@ -20,8 +20,8 @@ class Login extends Component {
     headers.append('Authorization', 'Basic ' + base64.encode(`${this.state.email}:${this.state.apitoken}`));
     
     try {
-      const response = await Api.apicall(`${this.state.apiurl}/rest/api/2/project`, { method: 'GET', headers: headers });
-      if (!response) {
+      const response = await fetch(`${this.state.apiurl}/rest/api/2/project`, { method: 'GET', headers: headers });
+      if (!response.ok) {
         throw new Error('Network response was not ok.');
       }
       localStorage.setItem('api', this.state.apitoken)

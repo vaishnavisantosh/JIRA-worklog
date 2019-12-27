@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import { Button, Modal } from 'semantic-ui-react'
 import moment from 'moment';
+import './User.css';
+
 
 const User = (props) => {
 
@@ -23,7 +25,7 @@ const User = (props) => {
                   <Modal onOpen={handleShow} open={show} style={{ width: '70%', height: '40%', margin: '10px 0px 0px 200px' }} trigger={
 
                     <td style={{ color: i !== '0.00' ? 'blue' : 'grey', cursor: i !== '0.00' ? 'pointer' : '' }}>{`${i}h`}</td>} centered={true}>
-                    <p style={{ fontWeight: 'bold', margin: '10px', fontSize: 'large' }}>Worklogs</p>
+                    <p className='worklogTitle'>Worklogs</p>
                     <Modal.Content>
                       {
                         <>
