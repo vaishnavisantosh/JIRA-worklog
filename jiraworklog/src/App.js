@@ -1,21 +1,24 @@
-import React, { Component } from 'react';
+import React, { Component, Suspense } from 'react';
 import { Route, Switch } from 'react-router-dom';
 import Login from './Container/Login/Login';
-import Timesheet from './Container/Timesheet/Timesheet';
+
+const Timesheet=React.lazy(()=>import('./Container/Timesheet/Timesheet'));
 
 class App extends Component {
 
   render() {
     let route = (
       <Switch>
-        <Route exact path='/timesheet' component={Timesheet} />
+        <Route exact path='/timesheet' render={()=><Timesheet/>} />
         <Route path='/' component={Login} />
       </Switch>
     )
 
     return (
       <>
-        {route}
+        <Suspense fallback={<p>Loading................!!</p>}>
+          {route}
+        </Suspense>
       </>
     );
   }

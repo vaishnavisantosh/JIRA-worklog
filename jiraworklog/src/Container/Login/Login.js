@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { withRouter } from 'react-router-dom';
-import { Button, Grid, Header, Segment } from 'semantic-ui-react'
+import { Button, Grid, Header, Segment,Message } from 'semantic-ui-react'
 import { Form, Input } from 'semantic-ui-react-form-validator';
 import 'semantic-ui-css/semantic.min.css';
 
@@ -10,11 +10,12 @@ class Login extends Component {
   state = {
     email: "",
     apitoken: "",
-    apiurl: ""
+    apiurl: "",
+    errorMsg:false
   }
 
   fetchData = async () => {
-    let headers = new Headers();
+    const headers = new Headers();
     headers.append("Content-Type", "application/json");
     headers.append("Accept", "application/json");
     headers.append('Authorization', 'Basic ' + base64.encode(`${this.state.email}:${this.state.apitoken}`));
@@ -29,13 +30,14 @@ class Login extends Component {
       localStorage.setItem('email', this.state.email)
       this.props.history.push('/timesheet')
     } catch (error) {
-      alert('credientials are not correct!')
+      this.setState({errorMsg:true})
+      
     }
   }
   render() {
 
-    const { email, apitoken, apiurl } = this.state;
-
+    const { email, apitoken, apiurl,errorMsg } = this.state;
+   
     const LoginForm =
       <Grid textAlign='center' style={{ height: '100vh' }} verticalAlign='middle'>
         <Grid.Column style={{ maxWidth: 450 }}>
@@ -79,6 +81,9 @@ class Login extends Component {
                 style={{ width: 400 }}
 
               />
+              { errorMsg ?<Message>Credientials not correct</Message>:null}
+          
+              
               <Button color='blue' fluid size='large'>
                 Login
               </Button>
@@ -95,7 +100,5 @@ class Login extends Component {
     );
   }
 }
-
-
 
 export default withRouter(Login);
