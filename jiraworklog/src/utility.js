@@ -4,7 +4,7 @@ export default {
     
     apicall: async (url)=>{
         let response;
-        const api = localStorage.getItem('api');
+        const api = localStorage.getItem('apiToken');
         const email = localStorage.getItem('email');
         const headers = { Authorization: 'Basic ' + base64.encode(`${email}:${api}`), "Content-Type": 'application/json', Accept: 'application/json'   };
         response = await axios.get(url, { headers });

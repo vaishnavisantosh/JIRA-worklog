@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { withRouter } from 'react-router-dom';
 import { Button, Grid, Header, Segment,Message } from 'semantic-ui-react'
 import { Form, Input } from 'semantic-ui-react-form-validator';
+import axios from 'axios';
 import 'semantic-ui-css/semantic.min.css';
 
 import base64 from 'base-64';
@@ -15,19 +16,16 @@ class Login extends Component {
   }
 
   fetchData = async () => {
-    const headers = new Headers();
-    headers.append("Content-Type", "application/json");
-    headers.append("Accept", "application/json");
-    headers.append('Authorization', 'Basic ' + base64.encode(`${this.state.email}:${this.state.apitoken}`));
+    const {email,apitoken,apiurl}=this.state;
+    const headers = {Authorization:'Basic '+base64.encode(`${email}:${apitoken}`),'Content-Type':'application/json',Accept:'application/json'}
     
     try {
-      const response = await fetch(`${this.state.apiurl}/rest/api/2/project`, { method: 'GET', headers: headers });
-      if (!response.ok) {
-        throw new Error('Network response was not ok.');
-      }
-      localStorage.setItem('api', this.state.apitoken)
-      localStorage.setItem('url', this.state.apiurl)
-      localStorage.setItem('email', this.state.email)
+      const response = await axios.get(`${apiurl}/rest/api/2/project`, {headers });
+      // 
+      if(response.data.length>0)
+      localStorage.setItem('apiToken', apitoken)
+      localStorage.setItem('url', apiurl)
+      localStorage.setItem('email',email)
       this.props.history.push('/timesheet')
     } catch (error) {
       this.setState({errorMsg:true})
