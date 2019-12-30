@@ -3,6 +3,7 @@ import { withRouter } from 'react-router-dom';
 import { Button, Grid, Header, Segment,Message } from 'semantic-ui-react'
 import { Form, Input } from 'semantic-ui-react-form-validator';
 import axios from 'axios';
+// import inputHoc from '../../Hoc/input';
 import 'semantic-ui-css/semantic.min.css';
 
 import base64 from 'base-64';
@@ -33,9 +34,12 @@ class Login extends Component {
     }
   }
   render() {
-
+    // debugger;
+    // const object={
+    //   placeholder:'E-mail address'
+    // }
     const { email, apitoken, apiurl,errorMsg } = this.state;
-   
+  //  console.log(this.props)
     const LoginForm =
       <Grid textAlign='center' style={{ height: '100vh' }} verticalAlign='middle'>
         <Grid.Column style={{ maxWidth: 450 }}>
@@ -80,7 +84,7 @@ class Login extends Component {
 
               />
               { errorMsg ?<Message>Credientials not correct</Message>:null}
-          
+              {/* {this.props.inputs(email)} */}
               
               <Button color='blue' fluid size='large'>
                 Login

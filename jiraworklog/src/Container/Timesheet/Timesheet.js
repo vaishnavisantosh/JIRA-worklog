@@ -21,9 +21,9 @@ class Timesheet extends Component {
         verticalsum: []
     }
     componentDidUpdate(props, PrevState) {
-        const {users}=this.state;
-        const [ currentStateStartMonthDate,currentStateMonthEndDate] = this.state.date;
-        const [ prevStateStartMonthDate,prevStateMonthEndDate] = PrevState.date;
+        const { users } = this.state;
+        const [currentStateStartMonthDate, currentStateMonthEndDate] = this.state.date;
+        const [prevStateStartMonthDate, prevStateMonthEndDate] = PrevState.date;
         if (currentStateStartMonthDate.toLocaleDateString() !== prevStateStartMonthDate.toLocaleDateString() || currentStateMonthEndDate.toLocaleDateString() !== prevStateMonthEndDate.toLocaleDateString()) {
             this.setFiltedData(users);
         }
@@ -31,7 +31,7 @@ class Timesheet extends Component {
     }
 
     getWLDatesArray = () => {
-        const {date}=this.state;
+        const { date } = this.state;
         const dateArray = this.getDateArray(new Date(date[0]), new Date(date[1]));
         const worklogArray = [];
         dateArray.map(i => worklogArray.push(i.toLocaleDateString()));
@@ -44,23 +44,23 @@ class Timesheet extends Component {
         return horizontalTotal;
     }
 
-    getverticalSum = (arr) => ( arr.reduce((r, a) => a.map((b, i) => (parseInt(r[i]) || 0) + parseInt(b)), []))
+    getverticalSum = (arr) => (arr.reduce((r, a) => a.map((b, i) => (parseInt(r[i]) || 0) + parseInt(b)), []))
 
     getverticalTotalarray = () => {
-       const {users}=this.state;
-       const total = [];
-       users.map((user, index) => total.push(user.worklogsData));
-       
-       if (total.length !== 0)
-        return  this.getverticalSum(total);
-        
+        const { users } = this.state;
+        const total = [];
+        users.map((user, index) => total.push(user.worklogsData));
+
+        if (total.length !== 0)
+            return this.getverticalSum(total);
+
         else { return []; }
     }
 
     setFiltedData = (users) => {
         const WLDates = this.getWLDatesArray();
         users.map((user, index) => {
-           
+
             users[index].worklogsData = [];
             users[index].commentArray = [];
             WLDates.forEach((date) => {
@@ -85,7 +85,7 @@ class Timesheet extends Component {
         this.setState({ users: users })
         this.setState({ allRecords: users })
         this.getTotalOfWorklogs(users);
-        
+
     }
 
     componentDidMount() {
@@ -143,7 +143,7 @@ class Timesheet extends Component {
                                                 this.setFiltedData(usersArray);
                                             }
                                         })
-                                        return 1;
+                                    return 1;
                                 })
                             });
                     });
@@ -203,8 +203,8 @@ class Timesheet extends Component {
     }
 
     render() {
-        
-        const {users,date,isLoading, value,results}=this.state;
+
+        const { users, date, isLoading, value, results } = this.state;
         const verticalTotalOfWorklogs = this.getverticalTotalarray();
         const dateArray = this.getDateArray(new Date(date[0]), new Date(date[1]));
         const horizontalTotal = this.getTotalOfWorklogs(users);
@@ -212,7 +212,7 @@ class Timesheet extends Component {
 
         return (
             <>
-              
+
                 <Button color='teal' style={{ float: 'right', margin: '10px 10px 0px 0px' }} onClick={this.gotoLoginPage}>Logout</Button>
 
                 <DateRangePicker
@@ -243,59 +243,60 @@ class Timesheet extends Component {
 
                     </Grid.Column>
                 </Grid>
-              
-                    <div style={{ overflowX: 'auto' }}>
-                        <table>
-                            <thead>
-                                <tr>
-                                    <th style={{ width: '22px' }}>Users</th>
-                                    <th></th>
-                                    <th className='showRightBorder'> &#931;</th>
-                                    {
-                                        dateArray.map(i => <td key={i} style={{ fontSize: '19px', fontWeight: 'normal' }} >{moment(i).format('D ddd')}</td>)
-                                    }
 
-                                </tr>
-                            </thead>
-                            <tbody>
+                <div style={{ overflowX: 'auto' }}>
+                    <table >
+                        <thead>
+                            <tr>
+                                <th></th>
+
+                                <th style={{ Width: '22px' }}>Users</th>
+                                <th className='showRightBorder'> &#931;</th>
                                 {
-                                    users.map((param, index) =>
-                                        <User
-                                            key={param.id}
-                                            name={param.name}
-                                            avatarurls={param.avatarUrls}
-                                            time={param.worklogsData}
-                                            comments={param.commentArray}
-                                            horizontalTotal={horizontalTotal[index]}
-                                            datearray={dateArray}
-                                        />
-                                    )}
-                                <tr>
-                                    <td></td>
-                                    <td></td>
-                                    <td className="showRightBorder"></td>
-                                    {dateArray.map(i => <td></td>)}
-                                </tr>
-                            </tbody>
+                                    dateArray.map(i => <td key={i} style={{ fontSize: '19px', fontWeight: 'normal' }} >{moment(i).format('D ddd')}</td>)
+                                }
 
-                            <tfoot>
-                                <tr>
-                                    <td></td>
-                                    <td style={{ fontWeight: 'bold' }}>Total</td>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {
+                                users.map((param, index) =>
+                                    <User
+                                        key={param.id}
+                                        name={param.name}
+                                        avatarurls={param.avatarUrls}
+                                        time={param.worklogsData}
+                                        comments={param.commentArray}
+                                        horizontalTotal={horizontalTotal[index]}
+                                        datearray={dateArray}
+                                    />
+                                )}
+                            <tr>
+                                <td></td>
+                                <td></td>
+                                <td className="showRightBorder"></td>
+                                {dateArray.map(i => <td></td>)}
+                            </tr>
+                        </tbody>
 
-                                    <td className='showRightBorder'>{`${verticalSumOfTotalhorizonalTime}h`}</td>
-                                    {
-                                        verticalTotalOfWorklogs.length !== 0 ?
+                        <tfoot>
+                            <tr>
+                                <td></td>
+                                <td style={{ fontWeight: 'bold' }}>Total</td>
+
+                                <td className='showRightBorder'>{`${verticalSumOfTotalhorizonalTime}h`}</td>
+                                {
+                                    verticalTotalOfWorklogs.length !== 0 ?
                                         verticalTotalOfWorklogs.map(i => <td style={{ fontWeight: 'bold' }}>{`${i.toFixed(2)}h`}</td>) : 0
-                                    }
+                                }
 
-                                </tr>
+                            </tr>
 
-                            </tfoot>
+                        </tfoot>
 
-                        </table>
-                    </div>
-               
+                    </table>
+                </div>
+
             </>
         );
     }

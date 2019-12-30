@@ -1,7 +1,7 @@
-import React, { useState } from 'react';
-import { Button, Modal } from 'semantic-ui-react'
-import moment from 'moment';
-import './User.css';
+import React, { useState } from "react";
+import { Button, Modal } from "semantic-ui-react";
+import moment from "moment";
+import "./User.css";
 
 
 const User = (props) => {
@@ -20,19 +20,19 @@ const User = (props) => {
         {
           props.time.map((i, index) =>
             <>
-              {i !== '0.00' ?
+              {i !== "0.00" ?
                 <>
-                  <Modal onOpen={handleShow} open={show} style={{ width: '70%', height: '40%', margin: '10px 0px 0px 200px' }} trigger={
+                  <Modal onOpen={handleShow} open={show} centered={true} style={{ width: '70%', height: '50%',margin:'10% 0% 0% 15%' }} trigger={
 
-                    <td style={{ color: i !== '0.00' ? 'blue' : 'grey', cursor: i !== '0.00' ? 'pointer' : '' }}>{`${i}h`}</td>} centered={true}>
+                    <td style={{ color: i !== '0.00' ? 'blue' : 'grey', cursor: i !== '0.00' ? 'pointer' : '' }}>{`${i}h`}</td>} >
                     <p className='worklogTitle'>Worklogs</p>
-                    <Modal.Content>
+                    <Modal.Content style = {{marginTop:'-30px' }}>
                       {
                         <>
-                          <p className='comment'>comment</p>
-                          <p style={{ display: 'inline' }}>Time spent</p>
+                          <p className='title'>Comment</p>
+                          <p className='title' style={{ display: 'inline' }}>Time spent</p>
                           <hr />
-                          {props.comments.map((comment, cindex) => cindex === index ? <p style={{ display: 'inline-block' }}>{`-${comment}  `}</p> : null)}
+                          {props.comments.map((comment, cindex) => cindex === index ? <p style={{ display: 'inline-block',fontWeight:'normal',fontSize:'20px' }}>{`-${comment}  `}</p> : null)}
 
                           <p className='modalWorklogTime'>{`${i}h`}</p>
                           <img style={{ float: 'right', margin: '-5px -95px 0px 0px' }} src={props.avatarurls} alt='avatarImage' />
