@@ -41,16 +41,8 @@ state = {
   onChangehandler=(inputValue,event)=>{
     this.setState({ [inputValue]: event.target.value }) }
 
-  
-
-
   render() {
-    // debugger;
-    // const object={
-    //   placeholder:'E-mail address'
-    // }
-    const { email, apitoken, apiurl, errorMsg } = this.state;
-    //  console.log(this.props)
+    const {errorMsg } = this.state;
     const LoginForm =
       <Grid textAlign='center' style={{ height: '100vh' }} verticalAlign='middle'>
         <Grid.Column style={{ maxWidth: 450 }}>
@@ -60,39 +52,7 @@ state = {
           <Form size='large'
             onSubmit={this.fetchData}>
             <Segment stacked>
-              {/* <Input fluid icon='user'
-                iconPosition='left'
-                placeholder='E-mail address'
-                type="email"
-                value={email}
-                onChange={(e, { value }) => { this.setState({ email: value }) }}
-                validators={['required']}
-                errorMessages={['this field is required']}
-                style={{ width: 400 }}
-              />
-                <Input fluid icon='user'
-                iconPosition='left'
-                placeholder='JIRA url'
-                value={apiurl}
-                validators={['required']}
-                onChange={(e, { value }) => { this.setState({ apiurl: value }) }}
-                errorMessages={['this field is required']}
-                style={{ width: 400 }}
-              />
-              <Input
-                fluid
-                icon='lock'
-                iconPosition='left'
-                placeholder='API token'
-                type='password'
-                value={apitoken}
-                onChange={(e, { value }) => { this.setState({ apitoken: value }) }}
-                validators={['required']}
-                errorMessages={['this field is required']}
-                style={{ width: 400 }} 
-              /> */}
-            
-              {this.props.inputs({...emailObject,onChange:(event)=> this.onChangehandler("email", event),value:this.state.email})}
+             {this.props.inputs({...emailObject,onChange:(event)=> this.onChangehandler("email", event),value:this.state.email})}
               {this.props.inputs({...urlObject,onChange:(event)=>this.onChangehandler("apiurl",event),value:this.state.apiurl})}
               {this.props.inputs({...passwordObject,onChange:(event)=>this.onChangehandler("apitoken",event),value:this.state.apitoken})}
               {errorMsg ? <Message>Credientials not correct</Message> : null}
