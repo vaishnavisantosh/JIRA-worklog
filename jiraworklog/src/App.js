@@ -6,7 +6,7 @@ const Timesheet = React.lazy(() => import('./Container/Timesheet/Timesheet'));
 
 class App extends Component {
   render() {
-    let route = (
+    const route = (
       <Switch>
         <Route exact path='/timesheet' render={() => <Timesheet />} />
         <Route path='/' component={Login} />

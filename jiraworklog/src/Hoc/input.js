@@ -4,24 +4,25 @@ import { Input } from 'semantic-ui-react-form-validator';
 const InputHoc = (props) => {
     return (
         <>
-            <Input fluid icon='user'
-                iconPosition='left'
-                placeholder='E-mail address'
-                type="email"
-                value={props.email}
-                onChange={(e, { value }) => { this.setState({ email: value }) }}
+            <Input fluid 
+                icon={props.icon}
+                placeholder={props.placeholder}
+                type={props.type}
+                value={props.value}
+                onChange={ props.onChange}
                 validators={['required']}
                 errorMessages={['this field is required']}
+                iconPosition='left'
                 style={{ width: 400 }}
             />
         </>
     )
 }
 
-const obj = { inputs: InputHoc }
+const objectStore = { inputs: InputHoc }
 
 export default (WrappedComponent) => {
     return function wrappedRender(args) {
-        return <WrappedComponent {...obj} />
+        return <WrappedComponent {...objectStore} />
     }
 }

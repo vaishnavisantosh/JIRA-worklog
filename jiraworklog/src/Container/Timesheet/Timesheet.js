@@ -145,8 +145,9 @@ class Timesheet extends Component {
     }
 
     handleSearchChange = (e, { value }) => {
+        const {allRecords}=this.state;
         if (!value) {
-            this.setState({ users: this.state.allRecords, value: '' })
+            this.setState({ users: allRecords, value: '' })
             return;
         }
         this.setState({ isLoading: true, value })
