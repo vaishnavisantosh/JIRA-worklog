@@ -8,7 +8,7 @@ import Api from '../../utility';
 import moment from 'moment';
 import './Timesheet.css';
 
-let date = new Date();
+const date = new Date();
 
 class Timesheet extends Component {
 
@@ -21,13 +21,12 @@ class Timesheet extends Component {
         verticalsum: []
     }
     componentDidUpdate(props, PrevState) {
-        const { users } = this.state;
-        const [currentStateStartMonthDate, currentStateMonthEndDate] = this.state.date;
+        const { users, date } = this.state;
+        const [currentStateStartMonthDate, currentStateMonthEndDate] = date;
         const [prevStateStartMonthDate, prevStateMonthEndDate] = PrevState.date;
         if (currentStateStartMonthDate.toLocaleDateString() !== prevStateStartMonthDate.toLocaleDateString() || currentStateMonthEndDate.toLocaleDateString() !== prevStateMonthEndDate.toLocaleDateString()) {
             this.setFiltedData(users);
         }
-
     }
 
     getWLDatesArray = () => {
@@ -49,11 +48,9 @@ class Timesheet extends Component {
     getverticalTotalarray = () => {
         const { users } = this.state;
         const total = [];
-        users.map((user, index) => total.push(user.worklogsData));
-
+        users.map((user) => total.push(user.worklogsData));
         if (total.length !== 0)
             return this.getverticalSum(total);
-
         else { return []; }
     }
 
@@ -65,10 +62,10 @@ class Timesheet extends Component {
             users[index].commentArray = [];
             WLDates.forEach((date) => {
                 if (user.worklog.length) {
-                    const wl = user.worklog.find(w => new Date(w.started).toLocaleDateString() === date);
-                    if (wl) {
-                        users[index].commentArray.push(wl.comment.content[0].content[0].text);
-                        users[index].worklogsData.push((wl.timeSpentSeconds / 3600).toFixed(2));
+                    const worklogData = user.worklog.find(worklogDate => new Date(worklogDate.started).toLocaleDateString() === date);
+                    if (worklogData) {
+                        users[index].commentArray.push(worklogData.comment.content[0].content[0].text);
+                        users[index].worklogsData.push((worklogData.timeSpentSeconds / 3600).toFixed(2));
                     } else {
                         users[index].commentArray.push('');
                         users[index].worklogsData.push((0).toFixed(2));
@@ -109,12 +106,10 @@ class Timesheet extends Component {
                                 worklogsData: [],
                                 commentArray: []
                             });
-
                         }
                         this.setState({ users: usersArray })
-
                     }).then(() => {
-                        Api.apicall(`${url}/rest/api/2/search?jql=project=${projectKey}&fields=issue,name&startAt=0&maxResults=8000 `)
+                        Api.apicall(`${url}/rest/api/2/search?jql=project=${projectKey}&fields=issue,name&startAt=0&maxResults=8000`)
                             .then(res => {
                                 for (let issuekey in res.issues) {
                                     issueKeys.push(res.issues[issuekey].key);
@@ -122,21 +117,16 @@ class Timesheet extends Component {
                             }).then(() => {
                                 let counter = 0;
                                 issueKeys.map((i, index) => {
-
                                     Api.apicall(`${url}/rest/api/3/issue/${i}/worklog`)
-
                                         .then(res => {
                                             for (let log in res.worklogs) {
                                                 res.worklogs.map(i => {
                                                     const userIndex = usersArray.findIndex(u => u.id === i.author.key)
                                                     if (userIndex !== -1) {
-
                                                         usersArray[userIndex].worklog.push(i);
-
                                                     }
                                                     return 1;
-                                                }
-                                                )
+                                                })
                                             }
                                             counter++;
                                             if (issueKeys.length === counter) {
@@ -148,9 +138,7 @@ class Timesheet extends Component {
                             });
                     });
             });
-
     }
-
 
     handleResultSelect = (e, { result }) => {
         this.setState({ value: result.name })
@@ -165,10 +153,10 @@ class Timesheet extends Component {
 
         setTimeout(() => {
             const completeData = this.state.users;
-            const a = this.state.users;
-            if (this.state.value.length < 1) return this.setState({ users: a })
-            const re = new RegExp(escapeRegExp(this.state.value), 'i')
-            const isMatch = (data) => re.test(data.name)
+            const usersData = this.state.users;
+            if (this.state.value.length < 1) return this.setState({ users: usersData })
+            const regularExpressionDate = new RegExp(escapeRegExp(this.state.value), 'i')
+            const isMatch = (data) => regularExpressionDate.test(data.name)
             const users = completeData.map(i => {
                 return { ...i, title: i.name, image: i.avatarUrls };
             })
@@ -178,10 +166,7 @@ class Timesheet extends Component {
             })
             this.setState({ users: this.state.results })
         }, 300)
-
-
     }
-
 
     getDateArray = (start, end) => {
         const dateArray = [];
@@ -203,7 +188,6 @@ class Timesheet extends Component {
     }
 
     render() {
-
         const { users, date, isLoading, value, results } = this.state;
         const verticalTotalOfWorklogs = this.getverticalTotalarray();
         const dateArray = this.getDateArray(new Date(date[0]), new Date(date[1]));
@@ -212,7 +196,6 @@ class Timesheet extends Component {
 
         return (
             <>
-
                 <Button color='teal' style={{ float: 'right', margin: '10px 10px 0px 0px' }} onClick={this.gotoLoginPage}>Logout</Button>
 
                 <DateRangePicker
@@ -221,8 +204,6 @@ class Timesheet extends Component {
                     format="y-MM-dd"
                     clearIcon={null}
                 />
-
-
 
                 <Grid style={{ display: 'inline' }}>
                     <Grid.Column width={4} style={{ padding: '0px 0px 0px 20px' }}>
@@ -240,7 +221,6 @@ class Timesheet extends Component {
                         />
                     </Grid.Column>
                     <Grid.Column width={10}>
-
                     </Grid.Column>
                 </Grid>
 
@@ -249,13 +229,11 @@ class Timesheet extends Component {
                         <thead>
                             <tr>
                                 <th></th>
-
                                 <th style={{ Width: '22px' }}>Users</th>
                                 <th className='showRightBorder'> &#931;</th>
                                 {
                                     dateArray.map(i => <td key={i} style={{ fontSize: '19px', fontWeight: 'normal' }} >{moment(i).format('D ddd')}</td>)
                                 }
-
                             </tr>
                         </thead>
                         <tbody>
@@ -278,31 +256,21 @@ class Timesheet extends Component {
                                 {dateArray.map(i => <td></td>)}
                             </tr>
                         </tbody>
-
                         <tfoot>
                             <tr>
                                 <td></td>
                                 <td style={{ fontWeight: 'bold' }}>Total</td>
-
                                 <td className='showRightBorder'>{`${verticalSumOfTotalhorizonalTime}h`}</td>
                                 {
-                                    verticalTotalOfWorklogs.length !== 0 ?
-                                        verticalTotalOfWorklogs.map(i => <td style={{ fontWeight: 'bold' }}>{`${i.toFixed(2)}h`}</td>) : 0
+                                    verticalTotalOfWorklogs.length !== 0 ? verticalTotalOfWorklogs.map(i => <td style={{ fontWeight: 'bold' }}>{`${i.toFixed(2)}h`}</td>) : 0
                                 }
-
                             </tr>
-
                         </tfoot>
-
                     </table>
                 </div>
-
             </>
         );
     }
-
-
-
 }
 
 export default withRouter(Timesheet);

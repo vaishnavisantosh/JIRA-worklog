@@ -13,7 +13,6 @@ class ErrorBoundary extends Component{
             errMsg:msg
         });
     }
-  
     
     render(){
         if(this.state.hasError){
@@ -23,11 +22,8 @@ class ErrorBoundary extends Component{
                 </div>
             )
         }
-
-         return this.props.children;
-
-        
-    }
+        return this.props.children;
+        }
 } 
 
 

@@ -2,18 +2,16 @@ import React, { Component, Suspense } from 'react';
 import { Route, Switch } from 'react-router-dom';
 import Login from './Container/Login/Login';
 
-const Timesheet=React.lazy(()=>import('./Container/Timesheet/Timesheet'));
+const Timesheet = React.lazy(() => import('./Container/Timesheet/Timesheet'));
 
 class App extends Component {
-
   render() {
     let route = (
       <Switch>
-        <Route exact path='/timesheet' render={()=><Timesheet/>} />
+        <Route exact path='/timesheet' render={() => <Timesheet />} />
         <Route path='/' component={Login} />
       </Switch>
     )
-
     return (
       <>
         <Suspense fallback={<p>Loading................!!</p>}>
@@ -22,9 +20,6 @@ class App extends Component {
       </>
     );
   }
-
-
-
 }
 
 export default App;

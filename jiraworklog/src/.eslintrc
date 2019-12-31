@@ -1,6 +1,4 @@
 {
     "extends": "react-app",
-    "rules": {
-        
-    }
+    "rules": {}
 }
