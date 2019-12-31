@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { withRouter } from 'react-router-dom';
 import { Button, Grid, Header, Segment, Message } from 'semantic-ui-react'
-import { Form, Input } from 'semantic-ui-react-form-validator';
+import { Form} from 'semantic-ui-react-form-validator';
 import Api from '../../utility';
 import {emailObject,passwordObject,urlObject} from '../../Constants';
 import InputHoc from '../../Hoc/input';
