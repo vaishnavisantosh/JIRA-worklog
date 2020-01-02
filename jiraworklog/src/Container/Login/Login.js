@@ -42,7 +42,7 @@ state = {
     this.setState({ [inputValue]: event.target.value }) }
 
   render() {
-    const {errorMsg } = this.state;
+    const {errorMsg,email,apitoken,apiurl } = this.state;
     const {inputs}=this.props;
     const LoginForm =
       <Grid textAlign='center' style={{ height: '100vh' }} verticalAlign='middle'>
@@ -53,9 +53,9 @@ state = {
           <Form size='large'
             onSubmit={this.fetchData}>
             <Segment stacked>
-             {inputs({...emailObject,onChange:(event)=> this.onChangehandler("email", event),value:this.state.email})}
-              {inputs({...urlObject,onChange:(event)=>this.onChangehandler("apiurl",event),value:this.state.apiurl})}
-              {inputs({...passwordObject,onChange:(event)=>this.onChangehandler("apitoken",event),value:this.state.apitoken})}
+             {inputs({...emailObject,onChange:(event)=> this.onChangehandler("email", event),value:email})}
+              {inputs({...urlObject,onChange:(event)=>this.onChangehandler("apiurl",event),value:apiurl})}
+              {inputs({...passwordObject,onChange:(event)=>this.onChangehandler("apitoken",event),value:apitoken})}
               {errorMsg ? <Message>Credientials not correct</Message> : null}
 
               <Button color='blue' fluid size='large'>
