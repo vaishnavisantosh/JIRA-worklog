@@ -4,7 +4,7 @@ import { Button, Grid, Header, Segment, Message } from 'semantic-ui-react'
 import { Form} from 'semantic-ui-react-form-validator';
 import Api from '../../utility';
 import {emailObject,passwordObject,urlObject} from '../../Constants';
-import InputHoc from '../../Hoc/input';
+import InputHoc from '../../Hoc/FormInput/input';
 
 class Login extends Component {
 state = {
@@ -43,6 +43,7 @@ state = {
 
   render() {
     const {errorMsg } = this.state;
+    const {inputs}=this.props;
     const LoginForm =
       <Grid textAlign='center' style={{ height: '100vh' }} verticalAlign='middle'>
         <Grid.Column style={{ maxWidth: 450 }}>
@@ -52,9 +53,9 @@ state = {
           <Form size='large'
             onSubmit={this.fetchData}>
             <Segment stacked>
-             {this.props.inputs({...emailObject,onChange:(event)=> this.onChangehandler("email", event),value:this.state.email})}
-              {this.props.inputs({...urlObject,onChange:(event)=>this.onChangehandler("apiurl",event),value:this.state.apiurl})}
-              {this.props.inputs({...passwordObject,onChange:(event)=>this.onChangehandler("apitoken",event),value:this.state.apitoken})}
+             {inputs({...emailObject,onChange:(event)=> this.onChangehandler("email", event),value:this.state.email})}
+              {inputs({...urlObject,onChange:(event)=>this.onChangehandler("apiurl",event),value:this.state.apiurl})}
+              {inputs({...passwordObject,onChange:(event)=>this.onChangehandler("apitoken",event),value:this.state.apitoken})}
               {errorMsg ? <Message>Credientials not correct</Message> : null}
 
               <Button color='blue' fluid size='large'>
