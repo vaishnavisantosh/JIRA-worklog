@@ -5,14 +5,12 @@ class ErrorBoundary extends Component{
         hasError:false,
         errMsg:""
     }
-
     componentDidCatch(error,msg){
         this.setState({
             hasError:true,
             errMsg:msg
         });
     }
-    
     render(){
         if(this.state.hasError){
             return(

@@ -1,7 +1,6 @@
 import base64 from 'base-64';
 import axios from 'axios';
 export default {
-
     apicall: async (url) => {
         let response;
         const api = localStorage.getItem('apiToken');

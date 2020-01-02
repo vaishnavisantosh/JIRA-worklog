@@ -3,7 +3,6 @@ import { Route, Switch } from 'react-router-dom';
 import Login from './Container/Login/Login';
 
 const Timesheet = React.lazy(() => import('./Container/Timesheet/Timesheet'));
-
 class App extends Component {
   render() {
     const route = (

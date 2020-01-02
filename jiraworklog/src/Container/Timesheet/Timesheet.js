@@ -8,33 +8,31 @@ import Api from '../../utility';
 import moment from 'moment';
 import './Timesheet.css';
 
-const date = new Date();
-
 class Timesheet extends Component {
-
     state = {
         users: [],
-        date: [new Date(date.getFullYear(), date.getMonth(), 1), new Date(date.getFullYear(), date.getMonth() + 1, 0)],
+        date: [moment().startOf('month').format('YYYY-MM-DD hh:mm'), moment().endOf('month').format('YYYY-MM-DD hh:mm')],
         isLoading: false,
         results: [],
         value: '',
         verticalsum: []
     }
+
     componentDidUpdate(props, PrevState) {
         const { users, date } = this.state;
         const [currentStateStartMonthDate, currentStateMonthEndDate] = date;
         const [prevStateStartMonthDate, prevStateMonthEndDate] = PrevState.date;
-        if (currentStateStartMonthDate.toLocaleDateString() !== prevStateStartMonthDate.toLocaleDateString() || currentStateMonthEndDate.toLocaleDateString() !== prevStateMonthEndDate.toLocaleDateString()) {
+        if (currentStateStartMonthDate !== prevStateStartMonthDate || currentStateMonthEndDate !== prevStateMonthEndDate) {
             this.setFiltedData(users);
         }
     }
 
     getWLDatesArray = () => {
         const { date } = this.state;
-        const dateArray = this.getDateArray(new Date(date[0]), new Date(date[1]));
-        const worklogArray = [];
-        dateArray.map(i => worklogArray.push(i.toLocaleDateString()));
-        return worklogArray;
+        const selectedDates = this.getSelectedDateRange(new Date(date[0]), new Date(date[1]));
+        const worklogs = [];
+        selectedDates.map(i => worklogs.push(i.toLocaleDateString()));
+        return worklogs;
     }
 
     getTotalOfWorklogs = (worklogArray) => {
@@ -57,7 +55,6 @@ class Timesheet extends Component {
     setFiltedData = (users) => {
         const WLDates = this.getWLDatesArray();
         users.map((user, index) => {
-
             users[index].worklogsData = [];
             users[index].commentArray = [];
             WLDates.forEach((date) => {
@@ -74,9 +71,7 @@ class Timesheet extends Component {
                     users[index].commentArray.push('');
                     users[index].worklogsData.push((0).toFixed(2));
                 }
-            }
-
-            )
+            })
             return 1;
         })
         this.setState({ users: users })
@@ -85,59 +80,48 @@ class Timesheet extends Component {
 
     }
 
-    componentDidMount() {
 
+    getUsersWorklogs = async () => {
+        let counter = 0;
         const url = localStorage.getItem('url');
-        const usersArray = [], issueKeys = [];
-        let projectKey;
-
-        Api.apicall(`${url}/rest/api/2/project`)
-            .then(res => {
-                projectKey = res[0].key
-            }).then(() => {
-                Api.apicall(`${url}/rest/api/2/user/assignable/search?project=${projectKey}`)
-                    .then(res => {
-                        for (let key in res) {
-                            usersArray.push({
-                                id: res[key].accountId,
-                                avatarUrls: Object.values(res[key].avatarUrls)[3],
-                                name: res[key].displayName,
-                                worklog: [],
-                                worklogsData: [],
-                                commentArray: []
-                            });
-                        }
-                        this.setState({ users: usersArray })
-                    }).then(() => {
-                        Api.apicall(`${url}/rest/api/2/search?jql=project=${projectKey}&fields=issue,name&startAt=0&maxResults=8000`)
-                            .then(res => {
-                                for (let issuekey in res.issues) {
-                                    issueKeys.push(res.issues[issuekey].key);
-                                }
-                            }).then(() => {
-                                let counter = 0;
-                                issueKeys.map((i, index) => {
-                                    Api.apicall(`${url}/rest/api/3/issue/${i}/worklog`)
-                                        .then(res => {
-                                            for (let log in res.worklogs) {
-                                                res.worklogs.map(i => {
-                                                    const userIndex = usersArray.findIndex(u => u.id === i.author.key)
-                                                    if (userIndex !== -1) {
-                                                        usersArray[userIndex].worklog.push(i);
-                                                    }
-                                                    return 1;
-                                                })
-                                            }
-                                            counter++;
-                                            if (issueKeys.length === counter) {
-                                                this.setFiltedData(usersArray);
-                                            }
-                                        })
-                                    return 1;
-                                })
-                            });
-                    });
+        const users = [];
+        const projectKey = await Api.apicall(`${url}/rest/api/2/project`);
+        const usersData = await Api.apicall(`${url}/rest/api/2/user/assignable/search?project=${projectKey[0].key}`)
+        for (let key in usersData) {
+            users.push({
+                id: usersData[key].accountId,
+                avatarUrls: Object.values(usersData[key].avatarUrls)[3],
+                name: usersData[key].displayName,
+                worklog: [],
+                worklogsData: [],
+                commentArray: []
             });
+        }
+        this.setState({ users: users });
+        const issueKeys = await Api.apicall(`${url}/rest/api/2/search?jql=project=${[projectKey[0].key]}&fields=issue,name&startAt=0&maxResults=8000`)
+        const issuekeys = [];
+        for (let issue in issueKeys.issues) {
+            issuekeys.push(issueKeys.issues[issue].key);
+        }
+        for (let key in issuekeys) {
+            const response = await Api.apicall(`${url}/rest/api/3/issue/${issuekeys[key]}/worklog`)
+            response.worklogs.map(i => {
+                const userIndex = users.findIndex(u => u.id === i.author.key)
+                if (userIndex !== -1) {
+                    users[userIndex].worklog.push(i);
+                }
+                return 1;
+            })
+
+            counter++;
+            if (issuekeys.length === counter) {
+                this.setFiltedData(users);
+            }
+        }
+    }
+
+    componentDidMount() {
+        this.getUsersWorklogs();
     }
 
     handleResultSelect = (e, { result }) => {
@@ -145,7 +129,7 @@ class Timesheet extends Component {
     }
 
     handleSearchChange = (e, { value }) => {
-        const {allRecords}=this.state;
+        const { allRecords } = this.state;
         if (!value) {
             this.setState({ users: allRecords, value: '' })
             return;
@@ -169,14 +153,14 @@ class Timesheet extends Component {
         }, 300)
     }
 
-    getDateArray = (start, end) => {
-        const dateArray = [];
+    getSelectedDateRange = (start, end) => {
+        const dateRange = [];
         let currentDate = start;
         while (currentDate <= end) {
-            dateArray.push(new Date(currentDate));
+            dateRange.push(new Date(currentDate));
             currentDate.setDate(currentDate.getDate() + 1);
         }
-        return dateArray;
+        return dateRange;
     }
 
     handleSetDate = (date) => {
@@ -191,13 +175,14 @@ class Timesheet extends Component {
     render() {
         const { users, date, isLoading, value, results } = this.state;
         const verticalTotalOfWorklogs = this.getverticalTotalarray();
-        const dateArray = this.getDateArray(new Date(date[0]), new Date(date[1]));
+        const selectedDateRange = this.getSelectedDateRange(new Date(date[0]), new Date(date[1]));
         const horizontalTotal = this.getTotalOfWorklogs(users);
         const verticalSumOfTotalhorizonalTime = horizontalTotal.length !== 0 ? horizontalTotal.reduce((a, b) => parseInt(a) + parseInt(b)) : 0
 
         return (
             <>
-                <Button color='teal' style={{ float: 'right', margin: '10px 10px 0px 0px' }} onClick={this.gotoLoginPage}>Logout</Button>
+                <div style={{ height: '15px' }}></div>
+                <Button color='teal' style={{ float: 'right', margin: '0px 10px 0px 0px' }} onClick={this.gotoLoginPage}>Logout</Button>
 
                 <DateRangePicker
                     onChange={this.handleSetDate}
@@ -207,8 +192,9 @@ class Timesheet extends Component {
                 />
 
                 <Grid style={{ display: 'inline' }}>
-                    <Grid.Column width={4} style={{ padding: '0px 0px 0px 20px' }}>
+                    <Grid.Column width={4} style={{ padding: '0px 0px 0px 40px' }}>
                         <Search style={{ width: '100%' }}
+
                             aligned='right'
                             loading={isLoading}
                             name="name"
@@ -233,28 +219,30 @@ class Timesheet extends Component {
                                 <th style={{ Width: '22px' }}>Users</th>
                                 <th className='showRightBorder'> &#931;</th>
                                 {
-                                    dateArray.map(i => <td key={i} style={{ fontSize: '19px', fontWeight: 'normal' }} >{moment(i).format('D ddd')}</td>)
+                                    selectedDateRange.length ?
+                                        selectedDateRange.map(i => <td key={i} style={{ fontSize: '19px', fontWeight: 'normal' }} >{moment(i).format('D ddd')}</td>) : 'no records found!'
                                 }
                             </tr>
                         </thead>
                         <tbody>
                             {
-                                users.map((param, index) =>
-                                    <User
-                                        key={param.id}
-                                        name={param.name}
-                                        avatarurls={param.avatarUrls}
-                                        time={param.worklogsData}
-                                        comments={param.commentArray}
-                                        horizontalTotal={horizontalTotal[index]}
-                                        datearray={dateArray}
-                                    />
-                                )}
+                                users.length ?
+                                    users.map((param, index) =>
+                                        <User
+                                            key={param.id}
+                                            name={param.name}
+                                            avatarurls={param.avatarUrls}
+                                            time={param.worklogsData}
+                                            comments={param.commentArray}
+                                            horizontalTotal={horizontalTotal[index]}
+                                            selectedDateRange={selectedDateRange}
+                                        />
+                                    ) : "no records Found!"}
                             <tr>
                                 <td></td>
                                 <td></td>
                                 <td className="showRightBorder"></td>
-                                {dateArray.map(i => <td></td>)}
+                                {selectedDateRange.map(i => <td></td>)}
                             </tr>
                         </tbody>
                         <tfoot>
