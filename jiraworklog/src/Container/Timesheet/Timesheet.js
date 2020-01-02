@@ -27,7 +27,7 @@ class Timesheet extends Component {
         }
     }
 
-    getWLDatesArray = () => {
+    getWorklogDates = () => {
         const { date } = this.state;
         const selectedDates = this.getSelectedDateRange(new Date(date[0]), new Date(date[1]));
         const worklogs = [];
@@ -53,7 +53,7 @@ class Timesheet extends Component {
     }
 
     setFiltedData = (users) => {
-        const WLDates = this.getWLDatesArray();
+        const WLDates = this.getWorklogDates();
         users.map((user, index) => {
             users[index].worklogsData = [];
             users[index].commentArray = [];

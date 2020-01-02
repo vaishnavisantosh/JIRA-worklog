@@ -4,10 +4,7 @@ import moment from "moment";
 import "./User.css";
 
 const User = (props) => {
-
   const [show, setShow] = useState(false);
-  const handleClose = () => setShow(false);
-  const handleShow = () => setShow(true);
   const { avatarurls, name, horizontalTotal, time, comments, selectedDateRange } = props
   return (
     <>
@@ -21,7 +18,7 @@ const User = (props) => {
               <>
                 {i !== "0.00" ?
                   <>
-                    <Modal onOpen={handleShow} open={show} centered={true} style={{ width: '70%', height: '50%' }} trigger={
+                    <Modal onOpen={()=>setShow(true)} open={show} centered={true} style={{ width: '70%', height: '50%' }} trigger={
                       <td style={{ color: i !== '0.00' ? 'blue' : 'grey', cursor: i !== '0.00' ? 'pointer' : '' }}>{`${i}h`}</td>}>
                       <p className='worklogTitle'>Worklogs</p>
                       <Modal.Content style={{ marginTop: '-30px' }}>
@@ -35,7 +32,7 @@ const User = (props) => {
                             <img style={{ float: 'right', margin: '-5px -95px 0px 0px' }} src={avatarurls} alt='avatarImage' />
                             {comments.map((comment, cindex) => cindex === index ? <p className='comments'>{`${moment(selectedDateRange[cindex]).format('MMM Do YYYY')}`}</p> : null)}
                             <hr />
-                            <Button style={{ float: 'right' }} color='blue' onClick={handleClose} >close</Button>
+                            <Button style={{ float: 'right' }} color='blue' onClick={()=>setShow(false)} >close</Button>
                           </>}
                       </Modal.Content>
                     </Modal>
