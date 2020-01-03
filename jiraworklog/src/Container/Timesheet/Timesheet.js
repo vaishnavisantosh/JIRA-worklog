@@ -150,7 +150,7 @@ class Timesheet extends Component {
                 results: filter(users, isMatch),
             })
             this.setState({ users: this.state.results })
-        }, 300)
+        }, 1000)
     }
 
     getSelectedDateRange = (start, end) => {
@@ -182,7 +182,7 @@ class Timesheet extends Component {
         return (
             <>
                 <div style={{ height: '15px' }}></div>
-                <Button color='teal' style={{ float: 'right', margin: '0px 10px 0px 0px' }} onClick={this.gotoLoginPage}>Logout</Button>
+                <Button color='blue' style={{ float: 'right', margin: '0px 10px 0px 0px' }} onClick={this.gotoLoginPage}>Logout</Button>
 
                 <DateRangePicker
                     onChange={this.handleSetDate}
@@ -210,17 +210,17 @@ class Timesheet extends Component {
                     <Grid.Column width={10}>
                     </Grid.Column>
                 </Grid>
-
-                <div style={{ overflowX: 'auto' }}>
+            <div className='outer'>
+                <div style={{ overflowX: 'auto' }} className=' inner'>
                     <table >
                         <thead>
                             <tr>
-                                <th></th>
-                                <th style={{ Width: '22px' }}>Users</th>
-                                <th className='showRightBorder'> &#931;</th>
+                                <th className='hard_left' style={{height:'69px'}}></th>
+                                <th className='next_left' style={{height:'69px',fontSize:'20px'}}>Users</th>
+                                <th className='next_right' style={{height:'69px',fontSize:'20px'}}> &#931;</th>
                                 {
                                     selectedDateRange.length ?
-                                        selectedDateRange.map(i => <td key={i} style={{ fontSize: '19px', fontWeight: 'normal' }} >{moment(i).format('D ddd')}</td>) : 'no records found!'
+                                        selectedDateRange.map(i => <th key={i} style={{ fontSize: '19px', fontWeight: 'normal' }} >{moment(i).format('D ddd')}</th>) : 'no records found!'
                                 }
                             </tr>
                         </thead>
@@ -239,23 +239,24 @@ class Timesheet extends Component {
                                         />
                                     ) : "no records Found!"}
                             <tr>
-                                <td></td>
-                                <td></td>
-                                <td className="showRightBorder"></td>
+                                <td className='hard_left' ></td>
+                                <td  className='next_left' ></td>
+                                <td className="showRightBorder next_right "></td>
                                 {selectedDateRange.map(i => <td></td>)}
                             </tr>
                         </tbody>
                         <tfoot>
                             <tr>
-                                <td></td>
-                                <td style={{ fontWeight: 'bold' }}>Total</td>
-                                <td className='showRightBorder'>{`${verticalSumOfTotalhorizonalTime}h`}</td>
+                                <td className='hard_left' style={{height:'51px',borderBottom:'1px solid rgba(211,211,211, 0.8)'}}></td>
+                                <td style={{ fontWeight: 'bold',borderBottom:'1px solid rgba(211,211,211, 0.8)' }} className='next_left'>Total</td>
+                                <td className='showRightBorder next_right ' style={{borderBottom:'1px solid rgba(211,211,211, 0.8)'}}>{`${verticalSumOfTotalhorizonalTime}h`}</td>
                                 {
                                     verticalTotalOfWorklogs.length !== 0 ? verticalTotalOfWorklogs.map(i => <td style={{ fontWeight: 'bold' }}>{`${i.toFixed(2)}h`}</td>) : 0
                                 }
                             </tr>
                         </tfoot>
                     </table>
+                </div>
                 </div>
             </>
         );

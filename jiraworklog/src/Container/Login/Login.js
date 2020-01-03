@@ -11,7 +11,7 @@ class Login extends Component {
     email: "",
     apitoken: "",
     apiurl: "",
-    errorMsg: false
+    errorMsg: ''
   }
 
   fetchData = async () => {
@@ -29,8 +29,15 @@ class Login extends Component {
         localStorage.setItem('email', email)
         this.props.history.push('/timesheet')
       }
+      else{
+        this.setState({errorMsg:'Incorrect email'})
+      }
     } catch (error) {
-      this.setState({ errorMsg: true })
+      if(error.message==='Network Error')
+      this.setState({ errorMsg: 'Incorrect Url' })
+      else{
+        this.setState({errorMsg:'Incorrect Token'})
+      }
     }
   }
 
@@ -42,7 +49,10 @@ class Login extends Component {
     const { errorMsg, email, apitoken, apiurl } = this.state;
     const { inputs } = this.props;
     const LoginForm =
-      <Grid textAlign='center' style={{ height: '100vh' }} verticalAlign='middle'>
+   <>
+   <br/>
+   <h1 style={{textAlign :'center',color:'#2185d0',fontWeight:'bold'}}>JIRA Worklog Application</h1>
+      <Grid textAlign='center' style={{ height: '100vh',margin:'0px 0px 0px 0px' }} verticalAlign='middle'>
         <Grid.Column style={{ maxWidth: 450 }}>
           <Header as='h2' color='blue' textAlign='center'>
             Log-in to your account
@@ -53,15 +63,16 @@ class Login extends Component {
               {inputs({ ...emailObject, onChange: (event) => this.onChangehandler("email", event), value: email })}
               {inputs({ ...urlObject, onChange: (event) => this.onChangehandler("apiurl", event), value: apiurl })}
               {inputs({ ...passwordObject, onChange: (event) => this.onChangehandler("apitoken", event), value: apitoken })}
-              {errorMsg ? <Message>Credientials not correct</Message> : null}
+  {errorMsg ? <Message>{errorMsg}</Message> : null}
 
-              <Button color='blue' fluid size='large'>
+              <Button color ='blue' fluid size='large'>
                 Login
               </Button>
             </Segment>
           </Form>
         </Grid.Column>
       </Grid>
+      </>
     return (
       <>
         {LoginForm}

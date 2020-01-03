@@ -8,10 +8,10 @@ const User = (props) => {
   const { avatarurls, name, horizontalTotal, time, comments, selectedDateRange } = props
   return (
     <>
-      <tr>
-        <td><img src={avatarurls} alt='avatarImage' /></td>
-        <td className='userName'>{name}</td>
-        <td className='worklogTime'> {`${horizontalTotal}h`} </td>
+      <tr style={{borderBottom:' 1px solid rgba(211,211,211, 0.8)'}}>
+        <td className='hard_left' style={{height:'69px'}}><img src={avatarurls} alt='avatarImage' style={{marginTop:'-7px'}} /></td>
+        <td className='userName next_left' style={{height:'69px',marginLeft:'-25px'}}>{name}</td>
+        <td className='worklogTime next_right' style={{height:'69px',marginLeft:'15px'}}> {`${horizontalTotal}h`} </td>
         {
           time.length ?
             time.map((i, index) =>
